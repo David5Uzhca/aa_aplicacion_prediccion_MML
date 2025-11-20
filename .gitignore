@@ -4,6 +4,7 @@ __pycache__/
 
 # Entorno Virtual
 .venv/
+venv/
 
 # Modelos y Datos Grandes (CORRECCIÓN DE RUTA)
 models/best_model.h5

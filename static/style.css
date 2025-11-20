@@ -1,62 +1,201 @@
-/* static/style.css */
+/* ====================================
+   1. VARIABLES GLOBALES Y RESET
+   ==================================== */
+:root {
+    /* Paleta de colores para inventario */
+    --color-primary: #007bff; /* Azul de acción/botones */
+    --color-secondary: #6c757d; /* Gris para textos secundarios */
+    --color-success: #28a745; /* Verde para Stock OK */
+    --color-danger: #dc3545; /* Rojo para Riesgo/Reabastecimiento */
+    --color-warning: #ffc107; /* Amarillo para advertencias */
+    --color-background: #f8f9fa; /* Fondo claro */
+    --color-card: #ffffff; /* Fondo de contenedores/cards */
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background: #f6f8fa;
-  color: #212121;
-  margin: 0;
-  padding: 20px;
+    font-family: var(--font-family);
+    background-color: var(--color-background);
+    color: #343a40;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
 }
-.container {
-  max-width: 860px;
-  margin: 20px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+
+/* Contenedor principal para centrar y limitar el ancho */
+body > div {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: var(--color-card);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
-h1 { margin-top: 0; }
-label { display:block; margin-top:12px; font-weight:600; }
-input[type="text"], select, input[type="number"] {
-  width:100%; padding:8px; margin-top:6px; border:1px solid #ddd; border-radius:6px;
+
+/* ====================================
+   2. TIPOGRAFÍA Y ENCABEZADOS
+   ==================================== */
+h1 {
+    color: var(--color-primary);
+    border-bottom: 3px solid var(--color-primary);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
-button { margin-top:12px; padding:10px 14px; border:none; border-radius:6px; background:#2b76ff; color:white; cursor:pointer;}
-button:hover { background:#1e5fe0; }
-.card { margin-top:16px; padding:12px; background:#f8f9fb; border-radius:6px; border:1px solid #eee; }
-table { width:100%; border-collapse:collapse; margin-top:12px;}
-table th, table td { padding:8px; border-bottom:1px solid #eee; text-align:left; }
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 24px;
+
+h2 {
+    color: #343a40;
+    margin-top: 25px;
+    margin-bottom: 15px;
 }
-.btn-primary, .btn-inicio {
-  display: inline-block;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 6px;
-  background: #2b76ff;
-  color: white;
-  text-decoration: none;
-  text-align: center;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background 0.3s;
+
+h3 {
+    color: var(--color-secondary);
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
-.btn-primary:hover, .btn-inicio:hover {
-  background: #1e5fe0;
+
+hr {
+    border: none;
+    border-top: 1px solid #dee2e6;
+    margin: 20px 0;
 }
-.btn-secondary {
-  margin-top: 12px;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 6px;
-  background: #6c757d;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background 0.3s;
+
+/* ====================================
+   3. CONTROLES Y FORMULARIOS
+   ==================================== */
+label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
 }
-.btn-secondary:hover {
-  background: #5a6268;
+
+input[type="date"],
+select {
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    margin-top: 5px;
+    margin-right: 15px;
+    display: inline-block;
+    min-width: 200px;
+    box-sizing: border-box;
+}
+
+/* Fieldset para las opciones de radio */
+fieldset {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #f8f9fa;
+}
+
+legend {
+    font-weight: 600;
+    color: var(--color-primary);
+    padding: 0 10px;
+}
+
+/* Estilo para los botones */
+button {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+    margin-right: 10px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: var(--color-secondary);
+    cursor: not-allowed;
+}
+
+/* ====================================
+   4. TABLA DE RESULTADOS
+   ==================================== */
+#results_table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.95em;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#results_table th,
+#results_table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #e9ecef;
+}
+
+#results_table thead th {
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+#results_table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Estilo específico para la columna Necesita Reabastecer */
+.restock-yes {
+    color: var(--color-danger);
+    font-weight: 700;
+}
+
+.restock-no {
+    color: var(--color-success);
+    font-weight: 700;
+}
+
+/* Ocultar los emoticonos en la tabla y aplicar el estilo a la celda */
+#results_table td:last-child {
+    text-align: center;
+}
+
+/* ====================================
+   5. CUADROS DE LOG Y ASISTENTE (IA)
+   ==================================== */
+
+/* Contenedor del log de reentrenamiento */
+#retrain_log {
+    background-color: #f4f4f4;
+    border: 1px solid #ced4da;
+    border-left: 5px solid var(--color-secondary);
+    padding: 15px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.9em;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap; /* Mantiene el formato pre pero permite el ajuste de línea */
+    border-radius: 4px;
+}
+
+/* Cuadro del Asistente (Conclusión de IA) */
+#conclusion_box {
+    background-color: #eaf6ff; /* Fondo azul claro, asociado a información IA/informes */
+    border: 1px solid #b3d9ff;
+    border-left: 5px solid var(--color-primary);
+    padding: 15px;
+    margin-top: 10px;
+    white-space: pre-wrap; 
+    min-height: 100px;
+    border-radius: 4px;
+    font-style: italic;
+}
+
+#conclusion_loading {
+    margin-top: 10px;
+    font-weight: 600;
 }
