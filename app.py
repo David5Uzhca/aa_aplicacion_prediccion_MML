@@ -10,6 +10,20 @@ from typing import Optional, List
 import json
 from datetime import datetime
 
+# --- INTEGRACIÓN VERTEX AI ---
+import os
+# La biblioteca google-cloud-aiplatform se autentica automáticamente en la VM
+from google.cloud import aiplatform
+
+# --- CONFIGURACIÓN DE VERTEX AI (REEMPLAZA ESTOS VALORES) ---
+# Necesitas tu Project ID y la región donde está la VM
+VERTEX_PROJECT_ID = "tu-id-de-proyecto-gcp"  # <--- ¡IMPORTANTE! Reemplazar con tu ID
+VERTEX_REGION = "us-central1"               # <--- Reemplazar con la región de tu VM
+VERTEX_MODEL = "gemini-2.5-flash"           # Usamos el modelo más rápido de Gemini
+VERTEX_CLIENT_READY = False
+
+# --- 1. Definición de Schemas (Pydantic) ---
+
 class PredictRequest(BaseModel):
     product_id: str
     date: Optional[str] = None
@@ -18,6 +32,10 @@ class RestockRequest(BaseModel):
     date: str
     threshold: Optional[float] = 20.0
 
+class ConclusionRequest(BaseModel):
+    results: List[dict] # Schema para recibir los datos de la tabla
+
+# --- 2. Inicialización y Configuración ---
 app = FastAPI(title="Re-stock Predictor API Dev")
 
 BASE_DIR = Path(__file__).parent
@@ -47,8 +65,9 @@ ALL_PRODUCT_IDS = []
 DISPLAY_PRODUCT_IDS = []
 EXPECTED_INPUT_SHAPE = (7, 13)
 
-
+# --- 3. Carga de modelo y recursos ---
 try:
+    # 3.1 Carga de recursos de ML
     MODEL = tf.keras.models.load_model(str(MODEL_PATH))
     SCALER_X = pickle.load(open(SCALER_X_PATH, "rb"))
     SCALER_Y = pickle.load(open(SCALER_Y_PATH, "rb"))
@@ -56,6 +75,7 @@ try:
     DF_CLEAN = pd.read_csv(DATASET_PKL, parse_dates=["created_at"])
     DF_CLEAN = DF_CLEAN.sort_values(["product_id", "created_at"]).reset_index(drop=True)
     DF_PRODUCTS = pd.read_csv(PRODUCTS_CSV) 
+    
     products_in_clean_df = set(DF_CLEAN['product_id'].unique())
     products_in_info_df = set(DF_PRODUCTS['id'].unique())
     
@@ -64,42 +84,39 @@ try:
     
     EXPECTED_INPUT_SHAPE = MODEL.input_shape[1:] 
 
+    # 3.2 Inicialización de Vertex AI (Debe estar dentro del try si falla)
+    aiplatform.init(project=VERTEX_PROJECT_ID, location=VERTEX_REGION)
+    VERTEX_CLIENT_READY = True
+    print("✅ Cliente de Vertex AI inicializado.")
+
 except Exception as e:
-    print(f"Error al cargar recursos del modelo: {e}")
+    print(f"Error al cargar recursos o inicializar Vertex AI: {e}")
 
-
-# ... (código anterior) ...
+# --- 4. Funciones de Predicción y Utilidad (Sin Cambios) ---
 
 def get_last_7_rows(product_id: str):
     """Obtiene las últimas 7 filas NO ESCALADAS de un producto, rellenando si es necesario."""
     if DF_CLEAN is None: return None, None
     
-    # Usamos .str.strip() para evitar errores de espacios en los IDs (mantenemos la corrección)
     prod = DF_CLEAN[DF_CLEAN["product_id"].str.strip() == product_id.strip()].tail(7)
     
-    # Extraemos solo las features
     X = prod[FEATURE_COLS].values.astype(np.float32)
     
     if len(prod) == 0:
-        return None, None # Si no hay datos, sigue fallando (404)
+        return None, None
 
-    # Si faltan filas (menos de 7), rellenamos la ventana con ceros al inicio (pre-padding)
     if X.shape[0] < 7:
         t_exp = 7
         f_exp = X.shape[1] 
-        # Creamos una matriz de ceros del tamaño faltante
         pad = np.zeros((t_exp - X.shape[0], f_exp))
-        # Apilamos los ceros encima de los datos existentes
         X = np.vstack([pad, X])
         print(f"DEBUG: Rellenado de {product_id} con {t_exp - X.shape[0]} filas de cero.")
     
     last_date = prod["created_at"].iloc[-1]
-    return X, last_date # X ahora siempre tiene la forma (7, 13)
+    return X, last_date
 
 def predict_stock_by_date(product_id: str, target_date_str: str):
-    """
-    Predice el stock futuro simulando la evolución de las 13 features.
-    """
+    """Predice el stock futuro simulando la evolución de las 13 features."""
     if MODEL is None or SCALER_X is None or SCALER_Y is None:
         return None
         
@@ -125,7 +142,6 @@ def predict_stock_by_date(product_id: str, target_date_str: str):
     
     for day in range(days):
         X_in = SCALER_X.transform(current).reshape(1, t_exp, f_exp)
-        
         pred_scaled = MODEL.predict(X_in, verbose=0)[0][0]
         pred = SCALER_Y.inverse_transform([[pred_scaled]])[0][0]
 
@@ -139,35 +155,13 @@ def predict_stock_by_date(product_id: str, target_date_str: str):
 
     return max(0, round(float(last_pred), 2))
 
-
-
-# ... (después de la función predict_stock_by_date) ...
-
-# --- 6. Función de Reentrenamiento y Actualización de Datos ---
+# --- 5. Funciones de Reentrenamiento (Sin Cambios) ---
 
 def retrain_model(new_data_df: pd.DataFrame) -> dict:
-    """
-    Añade los nuevos datos al DF_CLEAN, recalcula escaladores, 
-    crea nuevas secuencias y reentrena el modelo por 1 epoch.
-    Retorna métricas y logs.
-    """
     global MODEL, SCALER_X, SCALER_Y, DF_CLEAN, EXPECTED_INPUT_SHAPE, FEATURE_COLS
     
-    # Asegurarse de que los recursos clave existan
     if MODEL is None or DF_CLEAN is None:
         return {"success": False, "log": "ERROR: El modelo o DF_CLEAN no están cargados."}
-
-    # --- 6.1 INGESTA DE NUEVOS DATOS (Simulación de 13 features) ---
-    
-    # Usamos la última fecha de DF_CLEAN para los nuevos datos
-    last_real_date = DF_CLEAN['created_at'].max()
-    
-    # Crear un DataFrame con los nuevos datos, asumiendo que new_data_df tiene:
-    # product_id, fecha_predicha, quantity_on_hand
-    
-    # Esto es complejo, ya que solo tenemos 'quantity_on_hand' (feature 0) y 'fecha_predicha'.
-    # Para la ingesta, vamos a crear filas simuladas con las 12 features auxiliares 
-    # basándonos en la última fila conocida de cada producto (similar a la predicción).
 
     new_rows = []
     
@@ -175,28 +169,20 @@ def retrain_model(new_data_df: pd.DataFrame) -> dict:
         pid = row['product_id']
         pred_date = pd.to_datetime(row['fecha_predicha'])
         pred_stock = row['quantity_on_hand']
-        
-        # Obtener la última fila real para simular la inercia de las 12 features
+
         last_row_data = DF_CLEAN[DF_CLEAN['product_id'] == pid].tail(1)
 
         if not last_row_data.empty:
             last_row = last_row_data[FEATURE_COLS].values[0]
             last_date = last_row_data['created_at'].iloc[0]
 
-            # Calcular el número de días a predecir
             days_to_add = (pred_date - last_date).days
             
-            # Si la predicción es hoy o en el pasado, no la añadimos como nueva fila (ya está cubierta)
             if days_to_add <= 0:
                 continue
 
-            # La simulación más simple: Usar la última fila real como base para los auxiliares
             simulated_row = last_row.copy()
-            simulated_row[0] = pred_stock # Actualizar con el stock predicho
-            
-            # Aquí podríamos simular la evolución de los 12 features auxiliares (índice 1 en adelante)
-            # Para simplificar el reentrenamiento, solo añadiremos 1 fila: la predicción.
-            
+            simulated_row[0] = pred_stock 
             new_data = {
                 'product_id': pid,
                 'created_at': pred_date,
@@ -207,50 +193,24 @@ def retrain_model(new_data_df: pd.DataFrame) -> dict:
     if not new_rows:
          return {"success": True, "log": "Advertencia: No se generaron nuevas filas para añadir (fechas pasadas/actuales)."}
 
-    # Convertir a DataFrame y estandarizar columnas
     new_df = pd.DataFrame(new_rows)
-    
-    # Seleccionar solo las columnas necesarias para DF_CLEAN
     cols_to_keep = DF_CLEAN.columns.tolist() 
-    new_df = new_df[[col for col in new_df.columns if col in cols_to_keep]] # Asegurarse de que las columnas coincidan
-    
-    # Añadir los nuevos datos al DataFrame limpio global
+    new_df = new_df[[col for col in new_df.columns if col in cols_to_keep]] 
     DF_CLEAN = pd.concat([DF_CLEAN, new_df], ignore_index=True)
-    
-    # Guardar el DataFrame actualizado en el CSV (aprenderá de ellos en el futuro)
     DF_CLEAN.to_csv(str(DATASET_PKL), index=False)
     
     log = f"Datos añadidos: {len(new_rows)} nuevas filas. DF_CLEAN total: {len(DF_CLEAN):,}.\n"
-    
-    # --- 6.2 PREPARACIÓN DE SECUENCIAS PARA REENTRENAMIENTO ---
-    
-    # **NOTA DE IMPLEMENTACIÓN:** La creación de secuencias (fase 1) es compleja y pesada. 
-    # Para un reentrenamiento eficiente, se reentrenará usando SOLO la última secuencia conocida 
-    # para cada producto, incluyendo la nueva fila.
     
     X_retrain, y_retrain = [], []
     t_exp, f_exp = EXPECTED_INPUT_SHAPE
     
     for pid in DISPLAY_PRODUCT_IDS:
-        # Obtener las últimas 7 filas (incluyendo la nueva fila si está en DF_CLEAN)
         prod = DF_CLEAN[DF_CLEAN['product_id'] == pid]
         
-        # Requiere al menos t_exp + 1 para formar una secuencia (Input X y Target Y)
         if len(prod) >= t_exp + 1:
-            # Seleccionar la última ventana de entrada (X) y el siguiente target (Y)
-            
-            # X: últimos t_exp (7) días
-            X_seq = prod[FEATURE_COLS].tail(t_exp).values.astype(np.float32)
-            
-            # Y: el valor del día siguiente (la nueva predicción real)
-            # Como estamos prediciendo el mismo día, necesitamos una lógica de Y diferente.
-            
-            # **Asunción simplificada:** La predicción que acabamos de añadir es el nuevo Y.
-            # Volvemos a generar la secuencia de 7 días ANTES de la nueva fila.
             X_input_raw = prod[FEATURE_COLS].iloc[-t_exp-1:-1].values.astype(np.float32) 
-            y_target_raw = prod[FEATURE_COLS].iloc[-1, 0] # El stock del último día añadido
+            y_target_raw = prod[FEATURE_COLS].iloc[-1, 0] 
 
-            # Asegurar que X_input_raw tiene la forma correcta (t_exp, f_exp)
             if X_input_raw.shape == EXPECTED_INPUT_SHAPE:
                 X_retrain.append(X_input_raw)
                 y_retrain.append(y_target_raw)
@@ -261,10 +221,6 @@ def retrain_model(new_data_df: pd.DataFrame) -> dict:
 
     X_retrain = np.array(X_retrain)
     y_retrain = np.array(y_retrain).reshape(-1, 1)
-
-    # 6.3 ESCALADO y REENTRENAMIENTO
-    
-    # Volvemos a escalar los datos de reentrenamiento con los escaladores existentes
     X_flat = X_retrain.reshape(-1, f_exp)
     X_scaled = SCALER_X.transform(X_flat).reshape(X_retrain.shape)
     
@@ -287,8 +243,65 @@ def retrain_model(new_data_df: pd.DataFrame) -> dict:
     
     return {"success": True, "log": log}
 
+# --- 6. Nuevo Endpoint de Conclusión de IA ---
 
-# --- 7. Nuevo Endpoint de la API ---
+@app.post("/api/conclusion")
+async def api_conclusion(req: ConclusionRequest):
+    """
+    Recibe los resultados de la tabla y utiliza Gemini (via Vertex AI) para generar una conclusión.
+    """
+    global VERTEX_CLIENT_READY, VERTEX_MODEL
+
+    if not VERTEX_CLIENT_READY:
+        raise HTTPException(status_code=503, detail="El cliente de Vertex AI no está configurado o no se pudo autenticar. Verifique Project ID y permisos de VM.")
+        
+    if not req.results:
+        return {"conclusion": "No hay resultados para analizar."}
+
+    # 1. Formatear los datos para el LLM
+    data_str = "Resultados de Predicción de Stock:\n"
+    data_str += "---------------------------------------------------------\n"
+    data_str += "ID | Stock Predicho | Necesita Reabastecer\n"
+    data_str += "---|----------------|-----------------------\n"
+    
+    for item in req.results:
+        # Intenta obtener 'needs_restock' (de la pred. general) o calcúlalo (de la pred. unitaria)
+        needs_restock = "Sí" if item.get('needs_restock', False) or (item.get('quantity_on_hand', 0) <= 20 and 'needs_restock' not in item) else "No"
+        stock = f"{item.get('quantity_on_hand', 0):.2f}"
+        data_str += f"{item.get('product_id')} | {stock} | {needs_restock}\n"
+
+    # 2. Instrucción (Prompt) para el LLM
+    prompt = (
+        f"Analiza los siguientes resultados de predicción de inventario para un supermercado. "
+        f"El umbral de reabastecimiento es 20 unidades. Genera una conclusión en español que sea útil para la gerencia, "
+        f"cubriendo los siguientes puntos:\n"
+        f"1. Productos clave que requieren atención inmediata (stock <= 5).\n"
+        f"2. Un resumen del porcentaje de productos que necesitan reabastecimiento (stock <= 20).\n"
+        f"3. Una recomendación de acción breve.\n\n"
+        f"--- DATOS ---\n{data_str}"
+    )
+
+    try:
+        # 3. Llamada a Vertex AI
+        model_instance = aiplatform.Model.list(filter=f'display_name="{VERTEX_MODEL}"')
+        
+        if not model_instance:
+            raise ValueError(f"Modelo {VERTEX_MODEL} no encontrado en Vertex AI.")
+        
+        # Usamos generate_content
+        response = model_instance[0].generate_content(
+            contents=prompt,
+            config={"temperature": 0.2}
+        )
+        
+        return {"conclusion": response.text}
+
+    except Exception as e:
+        print(f"Error al llamar a la API de Vertex AI: {e}")
+        return {"conclusion": f"Error al generar la conclusión. Verifique el log de Uvicorn: {e}"}
+
+# --- 7. Rutas de la API (Endpoints) ---
+
 @app.post("/api/retrain")
 async def api_retrain(req: Request):
     try:
@@ -298,9 +311,7 @@ async def api_retrain(req: Request):
             raise HTTPException(status_code=400, detail="Datos no válidos o vacíos para el reentrenamiento.")
 
         new_data_df = pd.DataFrame(new_data_list)
-        
         new_data_df = new_data_df.dropna(subset=['quantity_on_hand'])
-        
         new_data_df['quantity_on_hand'] = new_data_df['quantity_on_hand'].apply(lambda x: max(0, float(x)))
         
         result = retrain_model(new_data_df)
@@ -313,7 +324,6 @@ async def api_retrain(req: Request):
     except Exception as e:
         print(f"Error en api_retrain: {e}")
         raise HTTPException(status_code=500, detail=f"Error interno durante el reentrenamiento: {e}")
-
 
 
 @app.get("/final-predict", response_class=HTMLResponse)
@@ -388,6 +398,7 @@ async def health():
         "scalers_loaded": SCALER_X is not None and SCALER_Y is not None,
         "df_clean_loaded": DF_CLEAN is not None,
         "df_products_loaded": DF_PRODUCTS is not None,
+        "vertex_ai_ready": VERTEX_CLIENT_READY, # Nuevo
         "total_products_available": len(ALL_PRODUCT_IDS),
         "products_in_interface": len(DISPLAY_PRODUCT_IDS),
         "expected_input_shape": EXPECTED_INPUT_SHAPE
