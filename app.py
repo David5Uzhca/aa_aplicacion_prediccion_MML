@@ -12,12 +12,13 @@ from datetime import datetime
 
 # --- INTEGRACIÓN VERTEX AI ---
 import os
-# La biblioteca google-cloud-aiplatform se autentica automáticamente en la VM
+# La biblioteca google-cloud-aiplatform se autentica automáticamente
 from google.cloud import aiplatform
-
+# --- CORRECCIÓN DE IMPORTACIONES DE VERTEX AI ---
+from vertexai.preview.generative_models import GenerativeModel
 # --- CONFIGURACIÓN DE VERTEX AI (REEMPLAZA ESTOS VALORES) ---
 # Necesitas tu Project ID y la región donde está la VM
-VERTEX_PROJECT_ID = "tu-id-de-proyecto-gcp"  # <--- ¡IMPORTANTE! Reemplazar con tu ID
+VERTEX_PROJECT_ID = "prediccion-478120"  # <--- ¡IMPORTANTE! Reemplazar con tu ID
 VERTEX_REGION = "us-central1"               # <--- Reemplazar con la región de tu VM
 VERTEX_MODEL = "gemini-2.5-flash"           # Usamos el modelo más rápido de Gemini
 VERTEX_CLIENT_READY = False
@@ -282,16 +283,14 @@ async def api_conclusion(req: ConclusionRequest):
     )
 
     try:
-        # 3. Llamada a Vertex AI
-        model_instance = aiplatform.Model.list(filter=f'display_name="{VERTEX_MODEL}"')
+        # 3. LLAMADA A VERTEX AI DENTRO DEL BLOQUE TRY
         
-        if not model_instance:
-            raise ValueError(f"Modelo {VERTEX_MODEL} no encontrado en Vertex AI.")
-        
-        # Usamos generate_content
-        response = model_instance[0].generate_content(
-            contents=prompt,
-            config={"temperature": 0.2}
+        # 3.1 Inicializar el modelo Fundacional
+        model = GenerativeModel(VERTEX_MODEL)
+
+        # 3.2 Generar el contenido
+        response = model.generate_content(
+            contents=prompt
         )
         
         return {"conclusion": response.text}

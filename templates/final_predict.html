@@ -47,6 +47,7 @@
         <thead>
             <tr>
                 <th>ID Producto</th>
+		<th>Nombre del Producto</th>
                 <th>Fecha Predicha</th>
                 <th>Stock Predicho</th>
                 <th>Necesita Reabastecer</th>
@@ -60,8 +61,16 @@
 
     <button id="update_model_button">Añadir Datos y Actualizar Modelo</button>
     
-    <h3>Log de Reentrenamiento</h3>
+    <h3>Reentrenamiento</h3>
     <pre id="retrain_log" style="background-color: #f4f4f4; border: 1px solid #ccc; padding: 10px; max-height: 200px; overflow-y: scroll;"></pre>
+
+    <hr>
+    
+    <h2>Reporte</h2>
+    <div id="conclusion_loading" style="color: blue; display: none;">Analizando resultados con Gemini...</div>
+    <div id="conclusion_box" style="background-color: #f0f8ff; border: 1px solid #aad8f8; padding: 15px; margin-top: 10px; white-space: pre-wrap; min-height: 100px;">
+        Haz una predicción para generar el análisis.
+    </div>
 
 <script>
     // === 1. DEFINICIÓN DE VARIABLES ESENCIALES ===
@@ -144,10 +153,12 @@
             let data = await response.json();
             
             if (isUnitario) {
-                data = [data]; // Convertir el objeto unitario a array para usar displayResults
+                data = [data];
             }
 
             displayResults(data);
+	    
+	    await generateConclusion();
 
         } catch (error) {
             resultsBody.innerHTML = `<tr><td colspan="4" style="color: red;">Error de conexión: ${error.message}</td></tr>`;
@@ -160,7 +171,7 @@
     // --- FUNCIÓN FALTANTE 3: Mostrar resultados ---
     function displayResults(data) {
         if (data.length === 0) {
-            resultsBody.innerHTML = '<tr><td colspan="4">No se encontraron resultados para la fecha y/o producto especificado.</td></tr>';
+            resultsBody.innerHTML = '<tr><td colspan="5">No se encontraron resultados para la fecha y/o producto especificado.</td></tr>';
             return;
         }
 
@@ -176,40 +187,89 @@
 
             const needsRestockText = needsRestockStatus ? 'SÍ' : 'NO';
             
-            const row = `
-                <tr>
-                    <td>${item.product_id}</td>
-                    <td>${item.fecha_predicha}</td>
-                    <td>${stock}</td>
-                    <td style="font-weight: bold;">${needsRestockText}</td>
-                </tr>
-            `;
+	    const row = `
+		 <tr>
+		 <td>${item.product_id}</td>        <td>${item.product_name}</td>      <td>${item.fecha_predicha}</td>    <td>${stock}</td>                  <td style="font-weight: bold;">${needsRestockText}</td> </tr>
+   	   `;
+
             resultsBody.innerHTML += row;
         });
     }
 
-    // ... (Despues de la función displayResults) ...
 
-    // --- Función para recolectar datos de la tabla ---
-    function getTableData() {
-        const data = [];
-        // Obtenemos todas las filas del cuerpo de la tabla (excluyendo el encabezado)
-        const rows = resultsBody.querySelectorAll('tr');
+
+// --- Función para recolectar datos de la tabla (CORREGIDA) ---
+function getTableData() {
+    const data = [];
+    const rows = resultsBody.querySelectorAll('tr');
+    
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
         
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            // Si no hay 4 celdas (ID, Fecha, Stock, Reabastecer), ignorar la fila
-            if (cells.length === 4) {
-                data.push({
-                    product_id: cells[0].textContent.trim(),
-                    fecha_predicha: cells[1].textContent.trim(),
-                    // El stock lo obtenemos como texto y lo convertimos a float
-                    quantity_on_hand: parseFloat(cells[2].textContent)
-                });
-            }
+        if (cells.length !== 5) { 
+            return;
+        }
+
+	const pid = cells[0].textContent.trim();
+        const stock = parseFloat(cells[3].textContent);
+        
+        if (pid === '' || isNaN(stock)) {
+            return;
+        }
+        
+        const needsRestockText = cells[4].textContent.trim(); 
+        const needsRestock = needsRestockText.includes('SÍ');
+
+        data.push({
+            product_id: cells[0].textContent.trim(),
+            product_name: cells[1].textContent.trim(), 
+            fecha_predicha: cells[2].textContent.trim(), 
+            quantity_on_hand: parseFloat(cells[3].textContent), 
+            needs_restock: needsRestock 
         });
-        return data;
+    });
+
+    return data;
+}
+
+// --- Lógica para generar la Conclusión con IA ---
+async function generateConclusion() {
+    const tableData = getTableData(); 
+    const conclusionBox = document.getElementById('conclusion_box');
+    const conclusionLoading = document.getElementById('conclusion_loading');
+    
+    if (tableData.length === 0 || tableData[0].product_id === 'Haz clic en '){
+        conclusionBox.textContent = "No hay resultados para analizar.";
+        return;
     }
+
+    // Limpiar el contenido y mostrar carga
+    conclusionBox.textContent = "Generando análisis...";
+    conclusionLoading.style.display = 'block';
+
+    try {
+        const response = await fetch('/api/conclusion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ results: tableData })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            conclusionBox.textContent = `❌ ERROR en el análisis de IA: ${result.detail || 'Fallo desconocido'}`;
+        } else {
+            conclusionBox.textContent = result.conclusion;
+        }
+
+    } catch (error) {
+        conclusionBox.textContent = `❌ Error de red al contactar al asistente: ${error.message}`;
+    } finally {
+        conclusionLoading.style.display = 'none';
+    }
+}
+
+
 
     // --- Lógica del botón de Reentrenamiento ---
     async function startRetraining() {
