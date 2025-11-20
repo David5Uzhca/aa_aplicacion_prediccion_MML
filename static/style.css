@@ -1,0 +1,62 @@
+/* static/style.css */
+body {
+  font-family: Arial, sans-serif;
+  background: #f6f8fa;
+  color: #212121;
+  margin: 0;
+  padding: 20px;
+}
+.container {
+  max-width: 860px;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+h1 { margin-top: 0; }
+label { display:block; margin-top:12px; font-weight:600; }
+input[type="text"], select, input[type="number"] {
+  width:100%; padding:8px; margin-top:6px; border:1px solid #ddd; border-radius:6px;
+}
+button { margin-top:12px; padding:10px 14px; border:none; border-radius:6px; background:#2b76ff; color:white; cursor:pointer;}
+button:hover { background:#1e5fe0; }
+.card { margin-top:16px; padding:12px; background:#f8f9fb; border-radius:6px; border:1px solid #eee; }
+table { width:100%; border-collapse:collapse; margin-top:12px;}
+table th, table td { padding:8px; border-bottom:1px solid #eee; text-align:left; }
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+.btn-primary, .btn-inicio {
+  display: inline-block;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  background: #2b76ff;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+.btn-primary:hover, .btn-inicio:hover {
+  background: #1e5fe0;
+}
+.btn-secondary {
+  margin-top: 12px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  background: #6c757d;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+.btn-secondary:hover {
+  background: #5a6268;
+}

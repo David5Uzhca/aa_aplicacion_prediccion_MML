@@ -1,0 +1,21 @@
+# Archivos de Python
+__pycache__/
+*.pyc
+
+# Entorno Virtual
+.venv/
+
+# Modelos y Datos Grandes (NO deben ir en Git)
+web/models/best_model.h5
+web/models/best_model.keras
+web/models/scaler_X.pkl
+web/models/scaler_y.pkl
+web/models/secuencias_quantity_on_hand.pkl
+
+# Archivos de datos grandes que puedes descargar después
+web/models/*.csv
+web/models/*.xlsx
+web/models/*.pkl
+
+# Archivos de Entorno (Claves secretas)
+.env

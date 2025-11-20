@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción de Stock (Dev)</title>
+</head>
+<body>
+    <h1>Predicción de Stock de Supermercado (DEV)</h1>
+    <hr>
+    <h2>Opciones de Predicción</h2>
+    
+    <fieldset>
+        <legend>Tipo de Predicción:</legend>
+        <label>
+            <input type="radio" name="prediction_type" id="radio_unitario" value="unitario" checked>
+            Predicción Unitaria (por Producto)
+        </label>
+        <br>
+        <label>
+            <input type="radio" name="prediction_type" id="radio_general" value="general">
+            Predicción General (Todos los 30 Productos)
+        </label>
+    </fieldset>
+
+    <br>
+
+    <label for="input_date">Fecha de Predicción (YYYY-MM-DD):</label>
+    <input type="date" id="input_date" value="" required> 
+    <span style="font-size: 0.8em; color: gray;">(Por defecto, hoy)</span>
+    
+    <br><br>
+
+    <div id="product_id_container">
+        <label for="input_product_id">ID del Producto:</label>
+        <select id="input_product_id" required>
+            </select>
+        <span style="font-size: 0.8em; color: gray;">(Ej: pdct0001)</span>
+    </div>
+    <br>
+    <button id="predict_button">Predecir Stock</button> 
+    <hr>
+    <h2>Resultados de la Predicción</h2>
+    <div id="loading_message" style="color: blue; display: none;">Cargando... esto podría tardar si la predicción es a muchos días.</div>
+
+    <table border="1" id="results_table" style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th>ID Producto</th>
+                <th>Fecha Predicha</th>
+                <th>Stock Predicho</th>
+                <th>Necesita Reabastecer</th>
+            </tr>
+        </thead>
+        <tbody id="results_body">
+            <tr><td colspan="4">Haz clic en 'Predecir Stock' para ver los resultados.</td></tr>
+        </tbody>
+    </table>
+    <hr>
+
+    <button id="update_model_button">Añadir Datos y Actualizar Modelo</button>
+    
+    <h3>Log de Reentrenamiento</h3>
+    <pre id="retrain_log" style="background-color: #f4f4f4; border: 1px solid #ccc; padding: 10px; max-height: 200px; overflow-y: scroll;"></pre>
+
+<script>
+    // === 1. DEFINICIÓN DE VARIABLES ESENCIALES ===
+    const unitarioRadio = document.getElementById('radio_unitario');
+    const generalRadio = document.getElementById('radio_general');
+    const productIdContainer = document.getElementById('product_id_container');
+    const resultsBody = document.getElementById('results_body');
+    const predictButton = document.getElementById('predict_button');
+    const loadingMessage = document.getElementById('loading_message');
+    
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('input_date').value = today;
+
+    // Carga de IDs (El backend asegura que sea una lista cruda separada por comas)
+    const products_list_raw = '{{ products_json }}'; 
+    const productIds = products_list_raw ? products_list_raw.split(',').map(id => id.trim()) : [];
+    
+    console.log("IDs de producto cargados:", productIds.length, productIds);
+    const productSelect = document.getElementById('input_product_id');
+
+    // === 2. FUNCIONES FALTANTES Y PRINCIPALES ===
+
+    function populateProductSelect() {
+        if (productIds.length === 0 || (productIds.length === 1 && productIds[0] === '')) {
+             const option = document.createElement('option');
+             option.textContent = "No hay productos disponibles";
+             productSelect.appendChild(option);
+             return;
+        }
+        productIds.forEach(id => {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = id;
+            productSelect.appendChild(option);
+        });
+    }
+
+    // --- FUNCIÓN FALTANTE 1: Manejar el tipo de predicción ---
+    function handlePredictionTypeChange() {
+        if (unitarioRadio.checked) {
+            productIdContainer.style.display = 'block';
+        } else {
+            productIdContainer.style.display = 'none';
+        }
+    }
+
+    // --- FUNCIÓN FALTANTE 2: Lógica de la predicción ---
+    async function runPrediction() {
+        resultsBody.innerHTML = '';
+        loadingMessage.style.display = 'block';
+        predictButton.disabled = true;
+
+        const date = document.getElementById('input_date').value;
+        const isUnitario = unitarioRadio.checked;
+        let url, body;
+
+        // Determinar el endpoint de la API
+        if (isUnitario) {
+            const productId = productSelect.value;
+            url = '/api/predict'; 
+            body = { product_id: productId, date: date };
+        } else {
+            url = '/api/restock'; 
+            body = { date: date, threshold: 20.0 };
+        }
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                resultsBody.innerHTML = `<tr><td colspan="4" style="color: red;">Error API ${response.status}: ${error.detail || 'Error desconocido'}</td></tr>`;
+                return;
+            }
+
+            let data = await response.json();
+            
+            if (isUnitario) {
+                data = [data]; // Convertir el objeto unitario a array para usar displayResults
+            }
+
+            displayResults(data);
+
+        } catch (error) {
+            resultsBody.innerHTML = `<tr><td colspan="4" style="color: red;">Error de conexión: ${error.message}</td></tr>`;
+        } finally {
+            loadingMessage.style.display = 'none';
+            predictButton.disabled = false;
+        }
+    }
+    
+    // --- FUNCIÓN FALTANTE 3: Mostrar resultados ---
+    function displayResults(data) {
+        if (data.length === 0) {
+            resultsBody.innerHTML = '<tr><td colspan="4">No se encontraron resultados para la fecha y/o producto especificado.</td></tr>';
+            return;
+        }
+
+        resultsBody.innerHTML = ''; 
+        
+        data.forEach(item => {
+            const stock = Math.max(0, parseFloat(item.quantity_on_hand)).toFixed(2);
+            
+            // Determinar si necesita reabastecimiento (asumiendo 20.0 de umbral)
+            const needsRestockStatus = item.needs_restock !== undefined 
+                                       ? item.needs_restock 
+                                       : (parseFloat(stock) <= 20.0);
+
+            const needsRestockText = needsRestockStatus ? 'SÍ' : 'NO';
+            
+            const row = `
+                <tr>
+                    <td>${item.product_id}</td>
+                    <td>${item.fecha_predicha}</td>
+                    <td>${stock}</td>
+                    <td style="font-weight: bold;">${needsRestockText}</td>
+                </tr>
+            `;
+            resultsBody.innerHTML += row;
+        });
+    }
+
+    // ... (Despues de la función displayResults) ...
+
+    // --- Función para recolectar datos de la tabla ---
+    function getTableData() {
+        const data = [];
+        // Obtenemos todas las filas del cuerpo de la tabla (excluyendo el encabezado)
+        const rows = resultsBody.querySelectorAll('tr');
+        
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            // Si no hay 4 celdas (ID, Fecha, Stock, Reabastecer), ignorar la fila
+            if (cells.length === 4) {
+                data.push({
+                    product_id: cells[0].textContent.trim(),
+                    fecha_predicha: cells[1].textContent.trim(),
+                    // El stock lo obtenemos como texto y lo convertimos a float
+                    quantity_on_hand: parseFloat(cells[2].textContent)
+                });
+            }
+        });
+        return data;
+    }
+
+    // --- Lógica del botón de Reentrenamiento ---
+    async function startRetraining() {
+        const tableData = getTableData();
+        const retrainLog = document.getElementById('retrain_log');
+        
+        if (tableData.length === 0 || tableData[0].product_id === 'Haz clic en '){
+            retrainLog.textContent = "ERROR: La tabla de resultados está vacía. Primero realiza una predicción.";
+            return;
+        }
+
+        retrainLog.textContent = `Preparando ${tableData.length} filas para añadir y reentrenar...\n`;
+        updateModelButton.disabled = true;
+        updateModelButton.textContent = "Procesando...";
+
+        try {
+            const response = await fetch('/api/retrain', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(tableData)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                retrainLog.textContent += `\nERROR: ${result.detail || 'Fallo desconocido'}`;
+            } else {
+                // El resultado contiene el log completo del backend
+                retrainLog.textContent = result.log;
+                retrainLog.style.backgroundColor = '#e6ffe6'; // Verde claro para éxito
+            }
+
+        } catch (error) {
+            retrainLog.textContent += `\nError de red al contactar al servidor: ${error.message}`;
+            retrainLog.style.backgroundColor = '#ffe6e6'; // Rojo claro para error
+        } finally {
+            updateModelButton.disabled = false;
+            updateModelButton.textContent = "Añadir Datos y Actualizar Modelo";
+        }
+    }
+
+    // --- 3. Agregar Event Listener al botón ---
+    // Asegúrate de que el botón updateModelButton esté definido globalmente.
+
+    const updateModelButton = document.getElementById('update_model_button'); // Añade esta línea al inicio del script
+
+    // Añadir el listener al final del script:
+    updateModelButton.addEventListener('click', startRetraining);
+
+
+    // === 3. INICIO Y EVENT LISTENERS ===
+    
+    populateProductSelect();
+    handlePredictionTypeChange(); 
+    
+    unitarioRadio.addEventListener('change', handlePredictionTypeChange);
+    generalRadio.addEventListener('change', handlePredictionTypeChange);
+    predictButton.addEventListener('click', runPrediction);
+
+</script>
+
+</body>
+</html>

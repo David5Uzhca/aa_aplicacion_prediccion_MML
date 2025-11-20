@@ -1,0 +1,31 @@
+id,nombre,brand,presentacion,product_full_name,categoria,perecible
+pdct0001,Manzana,La Vaquita,500g,Manzana La Vaquita 500g,Alimentos y perecibles,TRUE
+pdct0002,Banano,Campestre,2L,Banano Campestre 2L,Alimentos y perecibles,TRUE
+pdct0003,Leche Entera,Del Campo,1L,Leche Entera Del Campo 1L,Alimentos y perecibles,TRUE
+pdct0004,Yogur Natural,La Vaquita,1kg,Yogur Natural La Vaquita 1kg,Alimentos y perecibles,TRUE
+pdct0005,Queso Fresco,Santa María,500g,Queso Fresco Santa María 500g,Alimentos y perecibles,TRUE
+pdct0006,Pan de Molde,La Vaquita,1kg,Pan de Molde La Vaquita 1kg,Alimentos y perecibles,TRUE
+pdct0007,Huevos,Del Campo,2L,Huevos Del Campo 2L,Alimentos y perecibles,TRUE
+pdct0008,Carne de Res,La Vaquita,2L,Carne de Res La Vaquita 2L,Alimentos y perecibles,TRUE
+pdct0009,Pollo Entero,Santa María,2L,Pollo Entero Santa María 2L,Alimentos y perecibles,TRUE
+pdct0010,Jamón de Pavo,Santa María,Pack 6,Jamón de Pavo Santa María Pack 6,Alimentos y perecibles,TRUE
+pdct0011,Detergente Líquido,CleanPro,1L,Detergente Líquido CleanPro 1L,Limpieza e higiene,FALSE
+pdct0012,Suavizante,Brillamax,Unidad,Suavizante Brillamax Unidad,Limpieza e higiene,FALSE
+pdct0013,Jabón de Tocador,Higienix,Pack 6,Jabón de Tocador Higienix Pack 6,Limpieza e higiene,FALSE
+pdct0014,Papel Higiénico,CleanPro,2L,Papel Higiénico CleanPro 2L,Limpieza e higiene,FALSE
+pdct0015,Cepillo Dental,Higienix,1kg,Cepillo Dental Higienix 1kg,Limpieza e higiene,FALSE
+pdct0016,Escoba,HomeLife,Unidad,Escoba HomeLife Unidad,Hogar y utensilios,FALSE
+pdct0017,Trapeador,HomeLife,Caja,Trapeador HomeLife Caja,Hogar y utensilios,FALSE
+pdct0018,Sartén Antiadherente,CasaNova,Pack 6,Sartén Antiadherente CasaNova Pack 6,Hogar y utensilios,FALSE
+pdct0019,Olla de Acero,HomeLife,Bolsa,Olla de Acero HomeLife Bolsa,Hogar y utensilios,FALSE
+pdct0020,Taza Cerámica,KitchenPlus,1kg,Taza Cerámica KitchenPlus 1kg,Hogar y utensilios,FALSE
+pdct0021,Cargador USB,PowerTools,1kg,Cargador USB PowerTools 1kg,Electrónica y ferretería,FALSE
+pdct0022,Cable HDMI,ElectroMax,Pack 6,Cable HDMI ElectroMax Pack 6,Electrónica y ferretería,FALSE
+pdct0023,Audífonos,ElectroMax,Caja,Audífonos ElectroMax Caja,Electrónica y ferretería,FALSE
+pdct0024,Taladro,ElectroMax,2L,Taladro ElectroMax 2L,Electrónica y ferretería,FALSE
+pdct0025,Destornillador,ElectroMax,1kg,Destornillador ElectroMax 1kg,Electrónica y ferretería,FALSE
+pdct0026,Colchoneta de Yoga,SportLine,2L,Colchoneta de Yoga SportLine 2L,Deportes y accesorios,FALSE
+pdct0027,Pesas de Mano,ActiveZone,1kg,Pesas de Mano ActiveZone 1kg,Deportes y accesorios,FALSE
+pdct0028,Balón de Fútbol,SportLine,1kg,Balón de Fútbol SportLine 1kg,Deportes y accesorios,FALSE
+pdct0029,Zapatos Deportivos,ActiveZone,Pack 6,Zapatos Deportivos ActiveZone Pack 6,Deportes y accesorios,FALSE
+pdct0030,Camiseta,ActiveZone,Caja,Camiseta ActiveZone Caja,Deportes y accesorios,FALSE
