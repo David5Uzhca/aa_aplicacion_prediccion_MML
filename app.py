@@ -498,6 +498,13 @@ async def api_upload_and_retrain(file: UploadFile = File(...)):
         # Ejecutar la lógica de procesamiento y reentrenamiento
         result = process_external_data(uploaded_df, log)
         
+        if 'fecha_predicha' in uploaded_df.columns:
+            uploaded_df.rename(columns={'fecha_predicha': 'created_at'}, inplace=True)
+            log += "Columna 'fecha_predicha' renombrada a 'created_at'.\n"
+        # -----------------------------------------------------------------------
+        # El resto del código ahora usa la columna 'created_at' estándar
+        result = process_external_data(uploaded_df, log)
+        
         if not result['success']:
              raise HTTPException(status_code=500, detail={"log": result['log']})
              
