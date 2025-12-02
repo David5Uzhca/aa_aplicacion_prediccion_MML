@@ -253,72 +253,76 @@ def retrain_model(new_data_df: pd.DataFrame) -> dict:
 def process_external_data(uploaded_df: pd.DataFrame, log: str) -> dict:
     """
     Procesa un nuevo DataFrame de datos externos, lo fusiona con DF_CLEAN, 
-    y ejecuta el reentrenamiento del modelo.
+    y ejecuta el reentrenamiento del modelo, asegurando que se llenen todas las 
+    columnas descriptivas y auxiliares faltantes.
     """
     global DF_CLEAN, FEATURE_COLS, DISPLAY_PRODUCT_IDS
     
-    # 1. Validación y Estandarización de Columnas
+    # 1. Validación de Columnas Mínimas
     required_cols = ["product_id", "created_at", "quantity_on_hand"]
-    
-    # Nos aseguramos de que las columnas críticas existan en los datos subidos.
     if not all(col in uploaded_df.columns for col in required_cols):
         log += "ERROR: El CSV debe contener las columnas 'product_id', 'created_at' y 'quantity_on_hand'.\n"
         return {"success": False, "log": log}
 
     log += f"Datos externos recibidos: {len(uploaded_df):,} filas.\n"
 
-    # 2. Convertir y Limpiar
-    
-    # Asegurar el formato de fecha y eliminar NaT
+    # 2. Convertir y Limpiar (igual que antes)
     uploaded_df['created_at'] = pd.to_datetime(uploaded_df['created_at'], errors='coerce')
     uploaded_df = uploaded_df.dropna(subset=['created_at'])
-    
-    # Asegurar el tipo de stock y limpiar valores no válidos
     uploaded_df['quantity_on_hand'] = pd.to_numeric(uploaded_df['quantity_on_hand'], errors='coerce')
     uploaded_df = uploaded_df.dropna(subset=['quantity_on_hand'])
     
-    # 3. Simulación de Features Auxiliares (CRÍTICO)
-    # Para fusionar, necesitamos todas las 13 FEATURES_COLS. Usamos la última fila conocida
-    # de DF_CLEAN para rellenar las 12 columnas auxiliares.
+    # --- 3. PROCESAMIENTO Y LLENADO DE COLUMNAS FALTANTES (FIX) ---
     
+    # Lista de todas las columnas que DF_CLEAN tiene
+    all_df_clean_cols = DF_CLEAN.columns.tolist()
+    
+    # Las columnas proporcionadas por la subida
+    base_upload_cols = uploaded_df.columns.tolist()
+    
+    # Las columnas que DEBEMOS COPIAR de la última fila conocida
+    cols_to_copy = [col for col in all_df_clean_cols if col not in base_upload_cols]
+
     final_new_data = []
     
     for pid in uploaded_df['product_id'].unique():
-        # Obtener la última fila conocida de este producto en el histórico
         last_known_row = DF_CLEAN[DF_CLEAN['product_id'] == pid].sort_values('created_at').tail(1)
         
         if last_known_row.empty:
             log += f"Advertencia: El producto {pid} no existe en el histórico. Saltando.\n"
             continue
 
-        # Extraer los 12 valores auxiliares de la última fila conocida
-        aux_values = last_known_row[FEATURE_COLS[1:]].values[0] # [1:] excluye quantity_on_hand
-        
-        # Filtrar solo los nuevos datos de este producto
         new_prod_data = uploaded_df[uploaded_df['product_id'] == pid].copy()
         
-        # Aplicar la simulación de las 12 features a todas las filas del nuevo dataset
-        for col, val in zip(FEATURE_COLS[1:], aux_values):
-            new_prod_data[col] = val 
+        # Copiar todos los valores faltantes (Features, Nombres, Años, Días, etc.)
+        # de la última fila conocida de DF_CLEAN, excepto las columnas proporcionadas.
+        for col in cols_to_copy:
+            # Si es la columna principal de Stock, la ignoramos ya que se proporciona en el CSV
+            if col == 'quantity_on_hand':
+                continue
+                
+            # Copiar el último valor conocido de esa columna
+            new_prod_data[col] = last_known_row[col].iloc[0]
+            
+        # 4. Asegurar que la nueva tabla tenga exactamente las mismas columnas y orden que DF_CLEAN
+        new_prod_data = new_prod_data[all_df_clean_cols]
         
-        # Asegurar que solo tengamos las columnas correctas
-        new_prod_data = new_prod_data[DF_CLEAN.columns.tolist()]
+        # 5. Fusionar y filtrar fechas duplicadas (igual que antes)
+        
         final_new_data.append(new_prod_data)
-
+        
     if not final_new_data:
-        log += "ERROR: Ningún producto en el CSV subido se pudo mapear al histórico.\n"
+        log += "ERROR: Ningún producto en el CSV subido se pudo mapear al histórico o pasó la validación.\n"
         return {"success": False, "log": log}
-    
-    # 4. Fusión y Reentrenamiento
     
     new_df_to_add = pd.concat(final_new_data, ignore_index=True)
     
-    # Filtrar fechas duplicadas
+    # Filtrar fechas duplicadas (igual que antes)
     current_ids = set(DF_CLEAN[['product_id', 'created_at']].apply(tuple, axis=1))
     new_df_to_add = new_df_to_add[~new_df_to_add[['product_id', 'created_at']].apply(tuple, axis=1).isin(current_ids)]
     
     if new_df_to_add.empty:
-         log += "Advertencia: Todos los datos subidos ya existen en el histórico. Reentrenamiento abortado.\n"
+         log += "Advertencia: Todos los datos subidos ya existen en el histórico o son duplicados. Reentrenamiento abortado.\n"
          return {"success": True, "log": log}
          
     # Ejecutar la lógica de reentrenamiento existente
