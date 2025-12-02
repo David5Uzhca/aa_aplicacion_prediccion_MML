@@ -1,18 +1,22 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, UploadFile, File # <--- ¡UploadFile y File!
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
+from google.cloud import aiplatform
+from datetime import datetime
+from pathlib import Path
+from typing import Optional, List
+from langchain_google_vertexai import ChatVertexAI
+from langchain_core.prompts import ChatPromptTemplate
+#from vertexai.preview.generative_models import GenerativeModel
+
 import numpy as np
 import pandas as pd
 import pickle
 import tensorflow as tf
-from pathlib import Path
-from typing import Optional, List
 import json
-from datetime import datetime
 import os
-from google.cloud import aiplatform
-from vertexai.preview.generative_models import GenerativeModel
+
 
 VERTEX_PROJECT_ID = "prediccion-478120"  # <--- ¡IMPORTANTE! Reemplazar con tu ID
 VERTEX_REGION = "us-central1"               # <--- Reemplazar con la región de tu VM
@@ -88,7 +92,7 @@ try:
     # 3.2 Inicialización de Vertex AI (Debe estar dentro del try si falla)
     aiplatform.init(project=VERTEX_PROJECT_ID, location=VERTEX_REGION)
     VERTEX_CLIENT_READY = True
-    print("✅ Cliente de Vertex AI inicializado.")
+    print("Cliente de Vertex AI inicializado.")
 
 except Exception as e:
     print(f"Error al cargar recursos o inicializar Vertex AI: {e}")
@@ -244,13 +248,91 @@ def retrain_model(new_data_df: pd.DataFrame) -> dict:
     
     return {"success": True, "log": log}
 
-# --- 6. Nuevo Endpoint de Conclusión de IA ---
+# --- 5.5 Funciones de Reentrenamiento Por BD Externa ---
 
+def process_external_data(uploaded_df: pd.DataFrame, log: str) -> dict:
+    """
+    Procesa un nuevo DataFrame de datos externos, lo fusiona con DF_CLEAN, 
+    y ejecuta el reentrenamiento del modelo.
+    """
+    global DF_CLEAN, FEATURE_COLS, DISPLAY_PRODUCT_IDS
+    
+    # 1. Validación y Estandarización de Columnas
+    required_cols = ["product_id", "created_at", "quantity_on_hand"]
+    
+    # Nos aseguramos de que las columnas críticas existan en los datos subidos.
+    if not all(col in uploaded_df.columns for col in required_cols):
+        log += "ERROR: El CSV debe contener las columnas 'product_id', 'created_at' y 'quantity_on_hand'.\n"
+        return {"success": False, "log": log}
+
+    log += f"Datos externos recibidos: {len(uploaded_df):,} filas.\n"
+
+    # 2. Convertir y Limpiar
+    
+    # Asegurar el formato de fecha y eliminar NaT
+    uploaded_df['created_at'] = pd.to_datetime(uploaded_df['created_at'], errors='coerce')
+    uploaded_df = uploaded_df.dropna(subset=['created_at'])
+    
+    # Asegurar el tipo de stock y limpiar valores no válidos
+    uploaded_df['quantity_on_hand'] = pd.to_numeric(uploaded_df['quantity_on_hand'], errors='coerce')
+    uploaded_df = uploaded_df.dropna(subset=['quantity_on_hand'])
+    
+    # 3. Simulación de Features Auxiliares (CRÍTICO)
+    # Para fusionar, necesitamos todas las 13 FEATURES_COLS. Usamos la última fila conocida
+    # de DF_CLEAN para rellenar las 12 columnas auxiliares.
+    
+    final_new_data = []
+    
+    for pid in uploaded_df['product_id'].unique():
+        # Obtener la última fila conocida de este producto en el histórico
+        last_known_row = DF_CLEAN[DF_CLEAN['product_id'] == pid].sort_values('created_at').tail(1)
+        
+        if last_known_row.empty:
+            log += f"Advertencia: El producto {pid} no existe en el histórico. Saltando.\n"
+            continue
+
+        # Extraer los 12 valores auxiliares de la última fila conocida
+        aux_values = last_known_row[FEATURE_COLS[1:]].values[0] # [1:] excluye quantity_on_hand
+        
+        # Filtrar solo los nuevos datos de este producto
+        new_prod_data = uploaded_df[uploaded_df['product_id'] == pid].copy()
+        
+        # Aplicar la simulación de las 12 features a todas las filas del nuevo dataset
+        for col, val in zip(FEATURE_COLS[1:], aux_values):
+            new_prod_data[col] = val 
+        
+        # Asegurar que solo tengamos las columnas correctas
+        new_prod_data = new_prod_data[DF_CLEAN.columns.tolist()]
+        final_new_data.append(new_prod_data)
+
+    if not final_new_data:
+        log += "ERROR: Ningún producto en el CSV subido se pudo mapear al histórico.\n"
+        return {"success": False, "log": log}
+    
+    # 4. Fusión y Reentrenamiento
+    
+    new_df_to_add = pd.concat(final_new_data, ignore_index=True)
+    
+    # Filtrar fechas duplicadas
+    current_ids = set(DF_CLEAN[['product_id', 'created_at']].apply(tuple, axis=1))
+    new_df_to_add = new_df_to_add[~new_df_to_add[['product_id', 'created_at']].apply(tuple, axis=1).isin(current_ids)]
+    
+    if new_df_to_add.empty:
+         log += "Advertencia: Todos los datos subidos ya existen en el histórico. Reentrenamiento abortado.\n"
+         return {"success": True, "log": log}
+         
+    # Ejecutar la lógica de reentrenamiento existente
+    retrain_result = retrain_model(new_df_to_add)
+    
+    log += retrain_result['log']
+    
+    return {"success": retrain_result['success'], "log": log}
+
+
+# --- 6. Nuevo Endpoint de Conclusión de IA ---
+"""
 @app.post("/api/conclusion")
 async def api_conclusion(req: ConclusionRequest):
-    """
-    Recibe los resultados de la tabla y utiliza Gemini (via Vertex AI) para generar una conclusión.
-    """
     global VERTEX_CLIENT_READY, VERTEX_MODEL
 
     if not VERTEX_CLIENT_READY:
@@ -298,6 +380,70 @@ async def api_conclusion(req: ConclusionRequest):
     except Exception as e:
         print(f"Error al llamar a la API de Vertex AI: {e}")
         return {"conclusion": f"Error al generar la conclusión. Verifique el log de Uvicorn: {e}"}
+"""
+# app.py - Reemplaza completamente la función api_conclusion:
+
+@app.post("/api/conclusion")
+async def api_conclusion(req: ConclusionRequest):
+    """
+    Utiliza LangChain como intermediario para generar una conclusión con Vertex AI (Gemini).
+    """
+    global VERTEX_CLIENT_READY, VERTEX_MODEL
+
+    if not VERTEX_CLIENT_READY:
+        raise HTTPException(status_code=503, detail="El cliente de Vertex AI no está configurado.")
+        
+    if not req.results:
+        return {"conclusion": "No hay resultados para analizar."}
+
+    # 1. Formatear los datos para el LLM (Lógica sin cambios)
+    data_str = "Resultados de Predicción de Stock:\n"
+    data_str += "---------------------------------------------------------\n"
+    data_str += "ID | Stock Predicho | Necesita Reabastecer\n"
+    data_str += "---|----------------|-----------------------\n"
+    
+    for item in req.results:
+        needs_restock = "Sí" if item.get('needs_restock', False) or (item.get('quantity_on_hand', 0) <= 20 and 'needs_restock' not in item) else "No"
+        stock = f"{item.get('quantity_on_hand', 0):.2f}"
+        data_str += f"{item.get('product_id')} | {stock} | {needs_restock}\n"
+
+    prompt_template = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "Eres un experto analista de inventario y gestión de almacén. Tu tarea es analizar los datos de predicción "
+                "de stock y generar una conclusión breve y orientada a la acción para la gerencia."
+            ),
+            (
+                "human",
+                "Analiza los siguientes datos. El umbral de reabastecimiento es 20 unidades. Genera una conclusión en español "
+                "cubriendo: (1) Productos críticos (stock <= 5), (2) Resumen del porcentaje de productos que necesitan reabastecimiento (stock <= 20), "
+                "y (3) Una recomendación de acción breve. \n\n--- DATOS ---\n{data}"
+            )
+        ]
+    )
+    
+    # 3. Inicializar el LLM de LangChain (ChatVertexAI)
+    # LangChain se autentica usando la sesión de aiplatform.init()
+    llm = ChatVertexAI(
+        model_name=VERTEX_MODEL,
+        temperature=0.2,
+        project=VERTEX_PROJECT_ID,
+        location=VERTEX_REGION
+    )
+
+    # 4. Crear y Ejecutar la Cadena (Chain)
+    chain = prompt_template | llm
+    
+    try:
+        response = chain.invoke({"data": data_str})
+
+        return {"conclusion": response.content}
+
+    except Exception as e:
+        print(f"Error al llamar a la API de Vertex AI (LangChain): {e}")
+        return {"conclusion": f"Error al generar la conclusión con LangChain. Revise el log de Uvicorn: {e}"}
+    
 
 # --- 7. Rutas de la API (Endpoints) ---
 
@@ -324,6 +470,40 @@ async def api_retrain(req: Request):
         print(f"Error en api_retrain: {e}")
         raise HTTPException(status_code=500, detail=f"Error interno durante el reentrenamiento: {e}")
 
+
+@app.post("/api/upload_and_retrain")
+async def api_upload_and_retrain(file: UploadFile = File(...)):
+    """
+    Recibe un archivo CSV, lo procesa, fusiona con el histórico y reentrena el modelo.
+    """
+    log = f"Procesando archivo: {file.filename}\n"
+    
+    if not file.filename.endswith('.csv'):
+        log += "ERROR: Formato de archivo no soportado. Debe ser un archivo CSV (.csv).\n"
+        raise HTTPException(status_code=400, detail={"log": log})
+    
+    try:
+        # Leer el contenido del archivo subido en memoria
+        content = await file.read()
+        
+        # Usamos StringIO para que Pandas pueda leer el contenido como un archivo
+        from io import StringIO
+        s = str(content, 'utf-8')
+        uploaded_df = pd.read_csv(StringIO(s))
+        
+        # Ejecutar la lógica de procesamiento y reentrenamiento
+        result = process_external_data(uploaded_df, log)
+        
+        if not result['success']:
+             raise HTTPException(status_code=500, detail={"log": result['log']})
+             
+        return result
+
+    except Exception as e:
+        log += f"Error inesperado al procesar el archivo: {e}\n"
+        print(f"Error en api_upload_and_retrain: {e}")
+        raise HTTPException(status_code=500, detail={"log": log})
+    
 
 @app.get("/final-predict", response_class=HTMLResponse)
 async def final_predict(request: Request):
