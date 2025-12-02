@@ -475,6 +475,11 @@ async def api_retrain(req: Request):
         raise HTTPException(status_code=500, detail=f"Error interno durante el reentrenamiento: {e}")
 
 
+from fastapi import FastAPI, Request, HTTPException, UploadFile, File
+from io import StringIO
+import pandas as pd
+# ... (otras importaciones necesarias) ...
+
 @app.post("/api/upload_and_retrain")
 async def api_upload_and_retrain(file: UploadFile = File(...)):
     """
@@ -487,34 +492,48 @@ async def api_upload_and_retrain(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail={"log": log})
     
     try:
-        # Leer el contenido del archivo subido en memoria
+        # 1. Leer el contenido del archivo subido
         content = await file.read()
-        
-        # Usamos StringIO para que Pandas pueda leer el contenido como un archivo
-        from io import StringIO
         s = str(content, 'utf-8')
         uploaded_df = pd.read_csv(StringIO(s))
         
-        # Ejecutar la lógica de procesamiento y reentrenamiento
-        result = process_external_data(uploaded_df, log)
+        # 2. Lógica de Estandarización y Renombramiento
+        column_map = {}
         
+        # Primero, verificamos si la columna de fecha es 'fecha_predicha' y la renombramos.
+        # Si ya es 'created_at', no hacemos nada.
         if 'fecha_predicha' in uploaded_df.columns:
-            uploaded_df.rename(columns={'fecha_predicha': 'created_at'}, inplace=True)
+            column_map['fecha_predicha'] = 'created_at'
             log += "Columna 'fecha_predicha' renombrada a 'created_at'.\n"
-        # -----------------------------------------------------------------------
-        # El resto del código ahora usa la columna 'created_at' estándar
+        
+        # 3. Aplicar el renombramiento (si existe un mapeo)
+        if column_map:
+            uploaded_df.rename(columns=column_map, inplace=True)
+        
+        # 4. Verificar las columnas obligatorias después del renombramiento
+        required_cols = ["product_id", "created_at", "quantity_on_hand"]
+        if not all(col in uploaded_df.columns for col in required_cols):
+             missing = [col for col in required_cols if col not in uploaded_df.columns]
+             log += f"ERROR: Faltan columnas obligatorias después de la estandarización: {missing}.\n"
+             raise HTTPException(status_code=400, detail={"log": log})
+
+        # 5. Ejecutar la lógica de procesamiento y reentrenamiento (Una sola llamada)
+        # La función process_external_data debe recibir el DataFrame estandarizado
         result = process_external_data(uploaded_df, log)
         
+        # 6. Manejo de la Respuesta
         if not result['success']:
              raise HTTPException(status_code=500, detail={"log": result['log']})
              
         return result
 
+    except HTTPException:
+        # Re-raise HTTPException si ya se lanzó con un código específico (400 o 500)
+        raise
     except Exception as e:
-        log += f"Error inesperado al procesar el archivo: {e}\n"
+        log += f"Error inesperado al procesar el archivo: {e.__class__.__name__}: {e}\n"
         print(f"Error en api_upload_and_retrain: {e}")
         raise HTTPException(status_code=500, detail={"log": log})
-    
 
 @app.get("/final-predict", response_class=HTMLResponse)
 async def final_predict(request: Request):
