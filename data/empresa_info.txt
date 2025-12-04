@@ -1,0 +1,19 @@
+EMPRESA_INFO = {
+    "nombre": "StockWise Market Intelligence",
+    "nicho": "Gestión de Inventario y Cadena de Suministro para Retail/Supermercados",
+    "fundacion": 2023,
+    "mision": "Asegurar la disponibilidad óptima de productos frescos y de alta rotación en supermercados mediante predicciones de inventario impulsadas por IA (LSTM) y análisis de riesgo en tiempo real.",
+    "hitos": [
+        "2024: Integración de datos de puntos de venta (POS) para mejorar las 13 features.",
+        "2025: Implementación del Asistente Analítico basado en Vertex AI (Gemini) para análisis de reabastecimiento.",
+        "2025: Desarrollo del módulo de Aprendizaje Continuo para ajustar el modelo semanalmente."
+    ],
+    "servicios": [
+        "Predicción de Stock Diario (para minimizar pérdidas por caducidad/rotura de stock)",
+        "Recomendaciones de Reorden basadas en Umbrales Dinámicos",
+        "Análisis de Desempeño de SKU (Stock Keeping Unit) y Alertas de Quiebre.",
+        "Generación de Conclusiones Gerenciales por IA."
+    ],
+    "horario": "Soporte Técnico 24/7. Horario de Análisis y Reporte: Lunes a Sábado, 6:00 AM a 6:00 PM (GMT-5).",
+    "contacto": "soporte@stockwisemarket.com o +593 99 123 4567"
+}

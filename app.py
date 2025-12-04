@@ -1,27 +1,260 @@
-from fastapi import FastAPI, Request, HTTPException, UploadFile, File # <--- ¡UploadFile y File!
+from fastapi import FastAPI, Request, HTTPException, UploadFile, File
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from fastapi.staticfiles import StaticFiles
 from google.cloud import aiplatform
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, List
-from langchain_google_vertexai import ChatVertexAI
 from langchain_core.prompts import ChatPromptTemplate
-#from vertexai.preview.generative_models import GenerativeModel
+from vertexai.preview.generative_models import GenerativeModel, GenerationConfig
+from io import StringIO
+from langchain_google_vertexai import ChatVertexAI
+from langchain_core.messages import HumanMessage
+from langchain_core.output_parsers import StrOutputParser
 
+import re
 import numpy as np
 import pandas as pd
 import pickle
 import tensorflow as tf
 import json
 import os
+import sys
+import importlib.util
 
+# ====================================================================
+# CONFIGURACIÓN GLOBAL
+# ====================================================================
 
-VERTEX_PROJECT_ID = "prediccion-478120"  # <--- ¡IMPORTANTE! Reemplazar con tu ID
-VERTEX_REGION = "us-central1"               # <--- Reemplazar con la región de tu VM
-VERTEX_MODEL = "gemini-2.5-flash"           # Usamos el modelo más rápido de Gemini
+# --- CONFIGURACIÓN VERTEX AI (¡REEMPLAZA ESTOS VALORES!) ---
+VERTEX_PROJECT_ID = "prediccion-478120"  # <--- TU ID DE PROYECTO GCP
+VERTEX_REGION = "us-central1"               # <--- TU REGIÓN GCP (Ej: us-central1)
+VERTEX_MODEL = "gemini-2.5-flash"           # Modelo rápido para RAG/Function Calling
 VERTEX_CLIENT_READY = False
+
+# --- INFORMACIÓN DE LA EMPRESA (CONTEXTO CHATBOT) ---
+EMPRESA_INFO = {
+    "nombre": "StockWise Market Intelligence",
+    "nicho": "Gestión de Inventario y Cadena de Suministro para Retail/Supermercados",
+    "fundacion": 2023,
+    "mision": "Asegurar la disponibilidad óptima de productos frescos y de alta rotación en supermercados mediante predicciones de inventario impulsadas por IA (LSTM) y análisis de riesgo en tiempo real.",
+    "horario": "Soporte Técnico 24/7. Horario de Análisis y Reporte: Lunes a Sábado, 6:00 AM a 6:00 PM (GMT-5).",
+    "contacto": "soporte@stockwisemarket.com o +593 99 123 4567"
+}
+
+# --- BASE DE CONOCIMIENTO (FAQS GLOBAL) ---
+FAQS = [
+    "¿Qué tipo de modelo de IA usan para predecir el stock? Utilizamos una Red Neuronal Recurrente (RNN) con arquitectura LSTM (Long Short-Term Memory).",
+    "¿Cuál es el umbral de reabastecimiento que utiliza el sistema? El umbral es de 20 unidades.",
+    "¿Puedo agregar datos? Sí, puedes usar la función 'Importar Datos Externos' para subir un CSV con stock real y fecha para reentrenar.",
+    "¿Qué información incluye la ventana de 7 días? Incluye datos de stock físico, stock reservado, stock disponible, costos, valor total, y variables de tiempo como el día de la semana.",
+    "¿Qué modelo de Google Cloud potencia el asistente? El análisis gerencial (conclusiones y reportes) es generado por el modelo fundacional Gemini 2.5 Flash, accesible a través de la API de Vertex AI.",
+]
+
+
+# ====================================================================
+# DEFINICIONES DE FUNCIONES DEL CHATBOT (Function Calling)
+# ====================================================================
+
+# --- STUBS DE FUNCIONES DE NEGOCIO ---
+
+class NuevaFuncion1Input(BaseModel):
+    """Información para la función 1: generar reporte de ventas."""
+    detalle: str = Field(..., description="Detalle del reporte a generar (ej: 'productos de alta rotación' o 'ventas de la semana').")
+
+class NuevaFuncion2Input(BaseModel):
+    """Información para la función 2: consultar historial de departamento."""
+    departamento: str = Field(..., description="Nombre del departamento a consultar (ej: 'lácteos' o 'bebidas').")
+
+class PrediccionProductoInput(BaseModel):
+    """Información necesaria para la predicción de stock de un solo producto."""
+    product_id: str = Field(..., description="ID exacto del producto (ej: pdct0015).")
+    target_date: str = Field(..., description="Fecha futura para la predicción en formato YYYY-MM-DD.")
+
+class PrediccionGeneralInput(BaseModel):
+    """Información necesaria para la predicción de stock de todos los productos principales."""
+    target_date: str = Field(..., description="Fecha futura para la predicción en formato YYYY-MM-DD.")
+
+class AgregarRegistrosInput(BaseModel):
+    """Información para añadir nuevos registros de productos."""
+    datos_externos: str = Field(..., description="Detalles sobre si los datos vienen de la tabla o de un archivo CSV.")
+
+class AjustarModeloInput(BaseModel):
+    """Información para reentrenar/ajustar el modelo con datos recientes."""
+    fuente_datos: str = Field(..., description="Indica la fuente de los datos a usar (ej: 'tabla de prediccion' o 'datos externos').")
+
+
+# --- IMPLEMENTACIÓN DE LOS STUBS ---
+
+def nueva_funcion_1(detalle: str) -> str:
+    """
+    Función de ejemplo 1: Simula la creación de un reporte de ventas detallado.
+    Útil para queries sobre reportes que no sean de stock.
+    """
+    return f"Iniciando la generación del reporte de ventas detallado para {detalle}. Por favor, espere 5 minutos."
+
+def nueva_funcion_2(departamento: str) -> str:
+    """
+    Función de ejemplo 2: Simula la consulta del inventario histórico de un departamento específico.
+    Útil para queries sobre el rendimiento pasado de una categoría.
+    """
+    return f"Consultando el historial de inventario del departamento de '{departamento}'. Resumen: El historial muestra alta rotación en las últimas 4 semanas."
+
+def predecir_stock_producto(product_id: str, target_date: str) -> str:
+    """Llama al endpoint /api/predict para obtener la predicción de un producto específico."""
+    return f"Activando la predicción de stock para el producto {product_id} para la fecha {target_date}. Revisa la interfaz web para el resultado."
+
+def predecir_stock_general(target_date: str) -> str:
+    """Llama al endpoint /api/restock para obtener la predicción de stock de todos los productos principales."""
+    return f"Activando la predicción general para todos los productos principales para la fecha {target_date}. Revisa la interfaz web para la tabla de reabastecimiento."
+
+def agregar_nuevos_registros(datos_externos: str) -> str:
+    """Función para registrar la intención de agregar nuevos datos (CSV o tabla)."""
+    return f"Preparado para añadir nuevos registros de productos. Por favor, utiliza la interfaz web para subir el archivo CSV o haz clic en 'Añadir Datos y Actualizar Modelo' después de una predicción general."
+
+def actualizar_modelo(fuente_datos: str) -> str:
+    """Activa el endpoint /api/retrain o /api/upload_and_retrain para ajustar el modelo."""
+    return f"El modelo se actualizará (ajustará) usando datos de {fuente_datos}. Por favor, revisa el log de reentrenamiento en la interfaz web para ver el progreso."
+
+# Creamos la lista de herramientas/funciones para el LLM
+TOOLS = [
+    predecir_stock_producto,
+    predecir_stock_general,
+    agregar_nuevos_registros,
+    actualizar_modelo,
+    nueva_funcion_1,
+    nueva_funcion_2,
+]
+
+
+# ====================================================================
+# LÓGICA UNIFICADA DEL CHATBOT
+# ====================================================================
+
+# 5.2 Respuestas Básicas
+def responder_basico(query: str) -> str:
+    """Responde a saludos, agradecimientos y despedidas."""
+    query = query.lower().strip()
+
+    # Patrones Regulares (Regex)
+    patrones_saludo = r"^(hola|buen(o?s)? d(i|í)as|buenas tardes|qu(e|é) tal|saludos)"
+    patrones_agradecimiento = r"^(gracias|muchas gracias|te lo agradezco|genial|perfecto)"
+    patrones_despedida = r"^(adi(o|ó)s|chao|hasta luego|me despido|bye|nos vemos)"
+
+    if re.search(patrones_saludo, query):
+        hora = datetime.now().hour
+        if 5 <= hora < 12:
+            momento = "Buenos días"
+        elif 12 <= hora < 19:
+            momento = "Buenas tardes"
+        else:
+            momento = "Buenas noches"
+        return f"{momento}, soy **{EMPRESA_INFO['nombre']}**. ¿En qué puedo ayudarte hoy con tu inventario?"
+    
+    if re.search(patrones_agradecimiento, query):
+        return "¡Para eso estamos! Me da gusto ayudarte. ¿Necesitas algo más?"
+
+    if re.search(patrones_despedida, query):
+        return f"¡Adiós! Que tengas un excelente día. Si necesitas más predicciones de stock, ¡vuelve pronto!"
+    
+    return "" # Retorna vacío si no es una respuesta básica
+
+# 5.3 Lógica RAG/FAQ
+def responder_faqs(query: str) -> str:
+    """Responde a las FAQs utilizando RAG sobre la base de conocimiento."""
+    global llm_rag
+    
+    if llm_rag is None:
+        return "Disculpe, el servicio de IA (Gemini) no está disponible en este momento."
+
+    contexto = "\n".join(FAQS)
+    
+    # 2. Prompt para el RAG (Usamos f-string para construir el texto)
+    prompt_texto = f"""
+    Eres un asistente de soporte de {EMPRESA_INFO['nombre']}. Utiliza la siguiente información de la empresa y las FAQs para responder a la pregunta del usuario. 
+    Si la respuesta a la pregunta no está en el contexto, indica amablemente que no tienes la información.
+    
+    --- Información de la Empresa ---
+    Nombre: {EMPRESA_INFO['nombre']} (Fundada en {EMPRESA_INFO['fundacion']}). Misión: {EMPRESA_INFO['mision']}
+    Horario de atención: {EMPRESA_INFO['horario']}
+    
+    --- Base de Conocimiento (FAQs) ---
+    {contexto}
+    
+    --- Pregunta del Usuario ---
+    {query}
+    """
+    
+    # 3. CREAR Y EJECUTAR LA CADENA RAG (CORRECCIÓN)
+    
+    # Convertir el texto a un template de LangChain
+    prompt_template = ChatPromptTemplate.from_template("{prompt_texto}")
+    
+    # Unir el template, el LLM y el parser
+    chain_rag = prompt_template | llm_rag | StrOutputParser()
+    
+    # Invocar la cadena con el texto del prompt como la variable de entrada 'prompt_texto'
+    response = chain_rag.invoke({"prompt_texto": prompt_texto})
+    
+    return response
+
+# 5.4 Lógica de Function Calling
+def responder_tool_calling(query: str) -> str:
+    """
+    Utiliza LangChain para decidir si la pregunta del usuario requiere una herramienta.
+    """
+    global llm_tool
+    
+    # 1. Invocar al LLM con las herramientas
+    response = llm_tool.invoke([HumanMessage(content=query)])
+    
+    # 2. Verificar si el LLM decidió llamar a una herramienta
+    if response.tool_calls:
+        # Procesar la primera herramienta llamada (simplificado para este ejemplo)
+        tool_call = response.tool_calls[0]
+        tool_name = tool_call['name']
+        tool_args = tool_call['args']
+        
+        # Buscar la función Python localmente y ejecutarla
+        for tool_function in TOOLS:
+            if tool_function.__name__ == tool_name:
+                try:
+                    result = tool_function(**tool_args)
+                    return f"✅ FUNCIÓN LLAMADA: {tool_name}. Mensaje de éxito: {result}"
+                except Exception as e:
+                    return f"Error: La función {tool_name} falló al ejecutarse con argumentos {tool_args}. Detalle: {e}"
+        
+        return f"Error: La función {tool_name} fue identificada pero no se pudo ejecutar."
+
+    # 3. Si no hay llamada a herramienta, genera una respuesta normal (vacía, para que main_chatbot pase a RAG)
+    return ""
+
+
+# 5.5 Función Principal del Chatbot
+def main_chatbot(query: str) -> str:
+    """
+    Función principal que dirige la consulta a la función de respuesta apropiada.
+    """
+    
+    # 1. Respuestas Básicas (Máxima prioridad)
+    respuesta_basica = responder_basico(query)
+    if respuesta_basica:
+        return respuesta_basica
+
+    # 2. Función Tool Calling (Alta prioridad)
+    respuesta_tool = responder_tool_calling(query)
+    
+    if respuesta_tool.startswith("✅ FUNCIÓN LLAMADA:") or respuesta_tool.startswith("Error:"):
+        return respuesta_tool
+    
+    # 3. Respuesta RAG/FAQ (Si no se identificó Tool Calling o respuesta básica)
+    return responder_faqs(query)
+
+
+# ====================================================================
+# INICIALIZACIÓN DE FASTAPI Y CARGA DE MODELOS
+# ====================================================================
 
 # --- 1. Definición de Schemas (Pydantic) ---
 
@@ -36,6 +269,9 @@ class RestockRequest(BaseModel):
 class ConclusionRequest(BaseModel):
     results: List[dict]
 
+class ChatQuery(BaseModel):
+    query: str
+
 # --- 2. Inicialización y Configuración ---
 app = FastAPI(title="Re-stock Predictor API Dev")
 
@@ -44,9 +280,8 @@ MODEL_DIR = BASE_DIR / "models"
 TEMPLATES_DIR = BASE_DIR / "templates"
 STATIC_DIR = BASE_DIR / "static"
 
-# --- LÍNEA DE MONTAJE ---
+# Montaje de archivos estáticos
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-# ------------------------
 
 MODEL_PATH = MODEL_DIR / "best_model.keras"
 SCALER_X_PATH = MODEL_DIR / "scaler_X.pkl"
@@ -70,6 +305,11 @@ ALL_PRODUCT_IDS = []
 DISPLAY_PRODUCT_IDS = []
 EXPECTED_INPUT_SHAPE = (7, 13)
 
+# Objetos LLM globales que se inicializarán en el bloque try
+llm_rag = None
+llm_tool = None
+
+
 # --- 3. Carga de modelo y recursos ---
 try:
     # 3.1 Carga de recursos de ML
@@ -89,15 +329,34 @@ try:
     
     EXPECTED_INPUT_SHAPE = MODEL.input_shape[1:] 
 
-    # 3.2 Inicialización de Vertex AI (Debe estar dentro del try si falla)
+    # 3.2 Inicialización de Vertex AI
     aiplatform.init(project=VERTEX_PROJECT_ID, location=VERTEX_REGION)
     VERTEX_CLIENT_READY = True
     print("Cliente de Vertex AI inicializado.")
+    
+    # --- INICIALIZACIÓN DE OBJETOS LLM ---
+    llm_rag = ChatVertexAI(
+        model_name=VERTEX_MODEL,
+        temperature=0.0,
+        project=VERTEX_PROJECT_ID,
+        location=VERTEX_REGION
+    )
+
+    llm_tool = ChatVertexAI(
+        model_name=VERTEX_MODEL,
+        project=VERTEX_PROJECT_ID,
+        location=VERTEX_REGION
+    ).bind_tools(TOOLS)
+    # --- FIN DE LA INICIALIZACIÓN DE OBJETOS LLM ---
+
 
 except Exception as e:
     print(f"Error al cargar recursos o inicializar Vertex AI: {e}")
 
-# --- 4. Funciones de Predicción y Utilidad (Sin Cambios) ---
+
+# ====================================================================
+# FUNCIONES DE PREDICCIÓN Y REENTRENAMIENTO (ML CORE)
+# ====================================================================
 
 def get_last_7_rows(product_id: str):
     """Obtiene las últimas 7 filas NO ESCALADAS de un producto, rellenando si es necesario."""
@@ -146,7 +405,7 @@ def predict_stock_by_date(product_id: str, target_date_str: str):
     trend = current[-1] - current[-t_exp] 
     
     for day in range(days):
-        X_in = SCALER_X.transform(current).reshape(1, t_exp, f_exp)
+        X_in = SCALER_X.transform(current).reshape((1, t_exp, f_exp)).astype(np.float32)
         pred_scaled = MODEL.predict(X_in, verbose=0)[0][0]
         pred = SCALER_Y.inverse_transform([[pred_scaled]])[0][0]
 
@@ -160,19 +419,26 @@ def predict_stock_by_date(product_id: str, target_date_str: str):
 
     return max(0, round(float(last_pred), 2))
 
-# --- 5. Funciones de Reentrenamiento (Sin Cambios) ---
-
 def retrain_model(new_data_df: pd.DataFrame) -> dict:
     global MODEL, SCALER_X, SCALER_Y, DF_CLEAN, EXPECTED_INPUT_SHAPE, FEATURE_COLS
     
     if MODEL is None or DF_CLEAN is None:
         return {"success": False, "log": "ERROR: El modelo o DF_CLEAN no están cargados."}
 
+    # --- CORRECCIÓN: Manejar el Renombramiento y la Estandarización de la Fecha ---
+    if 'fecha_predicha' in new_data_df.columns:
+        new_data_df = new_data_df.copy() 
+        new_data_df.rename(columns={'fecha_predicha': 'created_at'}, inplace=True)
+    
+    if 'created_at' not in new_data_df.columns:
+        return {"success": False, "log": "ERROR: El DataFrame de entrada no contiene la columna 'created_at'."}
+    # -----------------------------------------------------------------------
+    
     new_rows = []
     
     for _, row in new_data_df.iterrows():
         pid = row['product_id']
-        pred_date = pd.to_datetime(row['fecha_predicha'])
+        pred_date = pd.to_datetime(row['created_at']) # Usar columna estandarizada
         pred_stock = row['quantity_on_hand']
 
         last_row_data = DF_CLEAN[DF_CLEAN['product_id'] == pid].tail(1)
@@ -196,7 +462,7 @@ def retrain_model(new_data_df: pd.DataFrame) -> dict:
             new_rows.append(new_data)
             
     if not new_rows:
-         return {"success": True, "log": "Advertencia: No se generaron nuevas filas para añadir (fechas pasadas/actuales)."}
+        return {"success": True, "log": "Advertencia: No se generaron nuevas filas para añadir (fechas pasadas/actuales)."}
 
     new_df = pd.DataFrame(new_rows)
     cols_to_keep = DF_CLEAN.columns.tolist() 
@@ -248,7 +514,6 @@ def retrain_model(new_data_df: pd.DataFrame) -> dict:
     
     return {"success": True, "log": log}
 
-# --- 5.5 Funciones de Reentrenamiento Por BD Externa ---
 
 def process_external_data(uploaded_df: pd.DataFrame, log: str) -> dict:
     """
@@ -272,15 +537,11 @@ def process_external_data(uploaded_df: pd.DataFrame, log: str) -> dict:
     uploaded_df['quantity_on_hand'] = pd.to_numeric(uploaded_df['quantity_on_hand'], errors='coerce')
     uploaded_df = uploaded_df.dropna(subset=['quantity_on_hand'])
     
-    # --- 3. PROCESAMIENTO Y LLENADO DE COLUMNAS FALTANTES (FIX) ---
+    # --- 3. PROCESAMIENTO Y LLENADO DE COLUMNAS FALTANTES ---
     
-    # Lista de todas las columnas que DF_CLEAN tiene
     all_df_clean_cols = DF_CLEAN.columns.tolist()
-    
-    # Las columnas proporcionadas por la subida
     base_upload_cols = uploaded_df.columns.tolist()
     
-    # Las columnas que DEBEMOS COPIAR de la última fila conocida
     cols_to_copy = [col for col in all_df_clean_cols if col not in base_upload_cols]
 
     final_new_data = []
@@ -294,21 +555,16 @@ def process_external_data(uploaded_df: pd.DataFrame, log: str) -> dict:
 
         new_prod_data = uploaded_df[uploaded_df['product_id'] == pid].copy()
         
-        # Copiar todos los valores faltantes (Features, Nombres, Años, Días, etc.)
-        # de la última fila conocida de DF_CLEAN, excepto las columnas proporcionadas.
+        # Copiar todos los valores faltantes 
         for col in cols_to_copy:
-            # Si es la columna principal de Stock, la ignoramos ya que se proporciona en el CSV
-            if col == 'quantity_on_hand':
+            try:
+                new_prod_data[col] = last_known_row[col].iloc[0]
+            except IndexError as e:
+                log += f"Error interno al copiar columna {col} para {pid}: {e}\n"
                 continue
-                
-            # Copiar el último valor conocido de esa columna
-            new_prod_data[col] = last_known_row[col].iloc[0]
-            
-        # 4. Asegurar que la nueva tabla tenga exactamente las mismas columnas y orden que DF_CLEAN
+
+        # 4. Asegurar la estructura
         new_prod_data = new_prod_data[all_df_clean_cols]
-        
-        # 5. Fusionar y filtrar fechas duplicadas (igual que antes)
-        
         final_new_data.append(new_prod_data)
         
     if not final_new_data:
@@ -317,7 +573,7 @@ def process_external_data(uploaded_df: pd.DataFrame, log: str) -> dict:
     
     new_df_to_add = pd.concat(final_new_data, ignore_index=True)
     
-    # Filtrar fechas duplicadas (igual que antes)
+    # Filtrar fechas duplicadas
     current_ids = set(DF_CLEAN[['product_id', 'created_at']].apply(tuple, axis=1))
     new_df_to_add = new_df_to_add[~new_df_to_add[['product_id', 'created_at']].apply(tuple, axis=1).isin(current_ids)]
     
@@ -333,59 +589,33 @@ def process_external_data(uploaded_df: pd.DataFrame, log: str) -> dict:
     return {"success": retrain_result['success'], "log": log}
 
 
-# --- 6. Nuevo Endpoint de Conclusión de IA ---
-"""
-@app.post("/api/conclusion")
-async def api_conclusion(req: ConclusionRequest):
-    global VERTEX_CLIENT_READY, VERTEX_MODEL
+# ====================================================================
+# RUTAS DE LA API (Endpoints)
+# ====================================================================
 
-    if not VERTEX_CLIENT_READY:
-        raise HTTPException(status_code=503, detail="El cliente de Vertex AI no está configurado o no se pudo autenticar. Verifique Project ID y permisos de VM.")
-        
-    if not req.results:
-        return {"conclusion": "No hay resultados para analizar."}
-
-    # 1. Formatear los datos para el LLM
-    data_str = "Resultados de Predicción de Stock:\n"
-    data_str += "---------------------------------------------------------\n"
-    data_str += "ID | Stock Predicho | Necesita Reabastecer\n"
-    data_str += "---|----------------|-----------------------\n"
-    
-    for item in req.results:
-        # Intenta obtener 'needs_restock' (de la pred. general) o calcúlalo (de la pred. unitaria)
-        needs_restock = "Sí" if item.get('needs_restock', False) or (item.get('quantity_on_hand', 0) <= 20 and 'needs_restock' not in item) else "No"
-        stock = f"{item.get('quantity_on_hand', 0):.2f}"
-        data_str += f"{item.get('product_id')} | {stock} | {needs_restock}\n"
-
-    # 2. Instrucción (Prompt) para el LLM
-    prompt = (
-        f"Analiza los siguientes resultados de predicción de inventario para un supermercado. "
-        f"El umbral de reabastecimiento es 20 unidades. Genera una conclusión en español que sea útil para la gerencia, "
-        f"cubriendo los siguientes puntos:\n"
-        f"1. Productos clave que requieren atención inmediata (stock <= 5).\n"
-        f"2. Un resumen del porcentaje de productos que necesitan reabastecimiento (stock <= 20).\n"
-        f"3. Una recomendación de acción breve.\n\n"
-        f"--- DATOS ---\n{data_str}"
-    )
-
+@app.post("/api/retrain")
+async def api_retrain(req: Request):
     try:
-        # 3. LLAMADA A VERTEX AI DENTRO DEL BLOQUE TRY
+        new_data_list = await req.json()
         
-        # 3.1 Inicializar el modelo Fundacional
-        model = GenerativeModel(VERTEX_MODEL)
+        if not new_data_list or not isinstance(new_data_list, list):
+            raise HTTPException(status_code=400, detail="Datos no válidos o vacíos para el reentrenamiento.")
 
-        # 3.2 Generar el contenido
-        response = model.generate_content(
-            contents=prompt
-        )
+        new_data_df = pd.DataFrame(new_data_list)
+        new_data_df = new_data_df.dropna(subset=['quantity_on_hand'])
+        new_data_df['quantity_on_hand'] = new_data_df['quantity_on_hand'].apply(lambda x: max(0, float(x)))
         
-        return {"conclusion": response.text}
+        result = retrain_model(new_data_df)
+        
+        if not result['success']:
+             raise HTTPException(status_code=500, detail=result['log'])
+             
+        return result
 
     except Exception as e:
-        print(f"Error al llamar a la API de Vertex AI: {e}")
-        return {"conclusion": f"Error al generar la conclusión. Verifique el log de Uvicorn: {e}"}
-"""
-# app.py - Reemplaza completamente la función api_conclusion:
+        print(f"Error en api_retrain: {e}")
+        raise HTTPException(status_code=500, detail=f"Error interno durante el reentrenamiento: {e}")
+
 
 @app.post("/api/conclusion")
 async def api_conclusion(req: ConclusionRequest):
@@ -447,38 +677,7 @@ async def api_conclusion(req: ConclusionRequest):
     except Exception as e:
         print(f"Error al llamar a la API de Vertex AI (LangChain): {e}")
         return {"conclusion": f"Error al generar la conclusión con LangChain. Revise el log de Uvicorn: {e}"}
-    
 
-# --- 7. Rutas de la API (Endpoints) ---
-
-@app.post("/api/retrain")
-async def api_retrain(req: Request):
-    try:
-        new_data_list = await req.json()
-        
-        if not new_data_list or not isinstance(new_data_list, list):
-            raise HTTPException(status_code=400, detail="Datos no válidos o vacíos para el reentrenamiento.")
-
-        new_data_df = pd.DataFrame(new_data_list)
-        new_data_df = new_data_df.dropna(subset=['quantity_on_hand'])
-        new_data_df['quantity_on_hand'] = new_data_df['quantity_on_hand'].apply(lambda x: max(0, float(x)))
-        
-        result = retrain_model(new_data_df)
-        
-        if not result['success']:
-             raise HTTPException(status_code=500, detail=result['log'])
-             
-        return result
-
-    except Exception as e:
-        print(f"Error en api_retrain: {e}")
-        raise HTTPException(status_code=500, detail=f"Error interno durante el reentrenamiento: {e}")
-
-
-from fastapi import FastAPI, Request, HTTPException, UploadFile, File
-from io import StringIO
-import pandas as pd
-# ... (otras importaciones necesarias) ...
 
 @app.post("/api/upload_and_retrain")
 async def api_upload_and_retrain(file: UploadFile = File(...)):
@@ -552,6 +751,17 @@ async def final_predict(request: Request):
          raise HTTPException(status_code=500, detail="Plantilla HTML no encontrada. Verifique que 'final_predict.html' esté en la carpeta templates.")
 
 
+@app.get("/chatbot", response_class=HTMLResponse)
+async def chatbot_page(request: Request):
+    """Sirve la interfaz del Chatbot."""
+    try:
+        # Usamos la misma estructura de lectura de HTML
+        html = open(TEMPLATES_DIR / "chatbot.html", encoding="utf-8").read()
+        return HTMLResponse(html)
+    except FileNotFoundError:
+         raise HTTPException(status_code=500, detail="Plantilla chatbot.html no encontrada.")
+
+
 @app.post("/api/predict")
 async def api_predict(req: PredictRequest):
     target_date = req.date or datetime.now().strftime("%Y-%m-%d")
@@ -612,3 +822,20 @@ async def health():
         "products_in_interface": len(DISPLAY_PRODUCT_IDS),
         "expected_input_shape": EXPECTED_INPUT_SHAPE
     }
+
+@app.post("/api/chatbot")
+async def api_chatbot(req: ChatQuery):
+    """
+    Endpoint principal para recibir consultas del chatbot y dirigirlas a la lógica unificada.
+    """
+    try:
+        if not VERTEX_CLIENT_READY:
+             raise HTTPException(status_code=503, detail="El cliente de Vertex AI no está configurado.")
+
+        response_text = main_chatbot(req.query)
+        
+        return {"response": response_text}
+        
+    except Exception as e:
+        print(f"Error en el procesamiento del Chatbot: {e}")
+        raise HTTPException(status_code=500, detail="Error interno al procesar la consulta del chatbot.")

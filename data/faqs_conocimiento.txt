@@ -1,0 +1,7 @@
+FAQS = [
+    "¿Qué tipo de modelo de IA usan para predecir el stock? Utilizamos una Red Neuronal Recurrente (RNN) con arquitectura LSTM (Long Short-Term Memory) que procesa una ventana histórica de 7 días con 13 variables de entrada específicas del retail (incluyendo datos de costos, rotación, y promociones).",
+    "¿Qué información incluye la ventana de 7 días? Incluye datos de stock físico, stock reservado, stock disponible, costos, valor total, y variables de tiempo como el día de la semana, crucial para modelar la demanda del supermercado.",
+    "¿Cómo puedo reentrenar el modelo con el conteo de inventario físico más reciente? Puedes usar la función 'Importar Datos Externos' en la interfaz web para subir un CSV con el conteo real y la fecha. Esto ajusta el modelo para reflejar la realidad del almacén.",
+    "¿Cuál es el umbral de reabastecimiento que utiliza el sistema? Nuestro asistente de IA genera una conclusión basada en el umbral de 20 unidades. Si el stock predicho es igual o inferior a 20, se marca como necesitado de reabastecimiento urgente.",
+    "¿Qué modelo de Google Cloud potencia el análisis? El análisis gerencial y las conclusiones son generados por el modelo fundacional Gemini 2.5 Flash, accesible a través de la API de Vertex AI, especializado en resumir datos tabulares.",
+]
