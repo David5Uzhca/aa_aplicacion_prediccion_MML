@@ -117,7 +117,6 @@ def actualizar_modelo(fuente_datos: str) -> str:
     """Activa el endpoint /api/retrain o /api/upload_and_retrain para ajustar el modelo."""
     return f"El modelo se actualizará (ajustará) usando datos de {fuente_datos}. Por favor, revisa el log de reentrenamiento en la interfaz web para ver el progreso."
 
-# Creamos la lista de herramientas/funciones para el LLM
 TOOLS = [
     predecir_stock_producto,
     predecir_stock_general,
@@ -126,7 +125,6 @@ TOOLS = [
     nueva_funcion_1,
     nueva_funcion_2,
 ]
-
 
 # ====================================================================
 # LÓGICA UNIFICADA DEL CHATBOT
@@ -158,11 +156,10 @@ def responder_basico(query: str) -> str:
     if re.search(patrones_despedida, query):
         return f"¡Adiós! Que tengas un excelente día. Si necesitas más predicciones de stock, ¡vuelve pronto!"
     
-    return "" # Retorna vacío si no es una respuesta básica
+    return ""
 
 # 5.3 Lógica RAG/FAQ
 def responder_faqs(query: str) -> str:
-    """Responde a las FAQs utilizando RAG sobre la base de conocimiento."""
     global llm_rag
     
     if llm_rag is None:
@@ -170,7 +167,6 @@ def responder_faqs(query: str) -> str:
 
     contexto = "\n".join(FAQS)
     
-    # 2. Prompt para el RAG (Usamos f-string para construir el texto)
     prompt_texto = f"""
     Eres un asistente de soporte de {EMPRESA_INFO['nombre']}. Utiliza la siguiente información de la empresa y las FAQs para responder a la pregunta del usuario. 
     Si la respuesta a la pregunta no está en el contexto, indica amablemente que no tienes la información.
@@ -186,57 +182,38 @@ def responder_faqs(query: str) -> str:
     {query}
     """
     
-    # 3. CREAR Y EJECUTAR LA CADENA RAG (CORRECCIÓN)
-    
-    # Convertir el texto a un template de LangChain
+    # 3. CREAR Y EJECUTAR LA CADENA RAG
     prompt_template = ChatPromptTemplate.from_template("{prompt_texto}")
-    
-    # Unir el template, el LLM y el parser
     chain_rag = prompt_template | llm_rag | StrOutputParser()
-    
-    # Invocar la cadena con el texto del prompt como la variable de entrada 'prompt_texto'
     response = chain_rag.invoke({"prompt_texto": prompt_texto})
     
     return response
 
 # 5.4 Lógica de Function Calling
 def responder_tool_calling(query: str) -> str:
-    """
-    Utiliza LangChain para decidir si la pregunta del usuario requiere una herramienta.
-    """
     global llm_tool
     
-    # 1. Invocar al LLM con las herramientas
     response = llm_tool.invoke([HumanMessage(content=query)])
     
-    # 2. Verificar si el LLM decidió llamar a una herramienta
     if response.tool_calls:
-        # Procesar la primera herramienta llamada (simplificado para este ejemplo)
         tool_call = response.tool_calls[0]
         tool_name = tool_call['name']
         tool_args = tool_call['args']
         
-        # Buscar la función Python localmente y ejecutarla
         for tool_function in TOOLS:
             if tool_function.__name__ == tool_name:
                 try:
                     result = tool_function(**tool_args)
-                    return f"✅ FUNCIÓN LLAMADA: {tool_name}. Mensaje de éxito: {result}"
+                    return f"FUNCIÓN LLAMADA: {tool_name}. Mensaje de éxito: {result}"
                 except Exception as e:
                     return f"Error: La función {tool_name} falló al ejecutarse con argumentos {tool_args}. Detalle: {e}"
         
         return f"Error: La función {tool_name} fue identificada pero no se pudo ejecutar."
-
-    # 3. Si no hay llamada a herramienta, genera una respuesta normal (vacía, para que main_chatbot pase a RAG)
     return ""
 
 
 # 5.5 Función Principal del Chatbot
 def main_chatbot(query: str) -> str:
-    """
-    Función principal que dirige la consulta a la función de respuesta apropiada.
-    """
-    
     # 1. Respuestas Básicas (Máxima prioridad)
     respuesta_basica = responder_basico(query)
     if respuesta_basica:
@@ -245,7 +222,7 @@ def main_chatbot(query: str) -> str:
     # 2. Función Tool Calling (Alta prioridad)
     respuesta_tool = responder_tool_calling(query)
     
-    if respuesta_tool.startswith("✅ FUNCIÓN LLAMADA:") or respuesta_tool.startswith("Error:"):
+    if respuesta_tool.startswith("FUNCIÓN LLAMADA:") or respuesta_tool.startswith("Error:"):
         return respuesta_tool
     
     # 3. Respuesta RAG/FAQ (Si no se identificó Tool Calling o respuesta básica)

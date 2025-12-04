@@ -6,7 +6,6 @@
     <title>Asistente de Inventario (Chatbot)</title>
     <link rel="stylesheet" href="/static/style.css"> 
     <style>
-        /* Estilos específicos del chat */
         #chat-container {
             max-width: 700px;
             margin: 20px auto;
@@ -29,12 +28,12 @@
             max-width: 80%;
         }
         .user-message {
-            background-color: #d1e7ff; /* Azul claro */
+            background-color: #d1e7ff;
             margin-left: auto;
             text-align: right;
         }
         .ai-message {
-            background-color: #ffffff; /* Blanco */
+            background-color: #ffffff;
             border: 1px solid #ced4da;
             text-align: left;
         }
@@ -57,7 +56,7 @@
 </head>
 <body>
     <div id="chat-container">
-        <h1 style="text-align: center; margin-top: 0; padding-top: 20px;">🤖 Asistente de StockWise</h1>
+        <h1 style="text-align: center; margin-top: 0; padding-top: 20px;">Asistente de StockWise</h1>
         <div id="chat-window">
             <div class="message ai-message">
                 Hola! Soy el asistente de StockWise Market Intelligence. Puedo ayudarte con preguntas sobre la empresa, predicciones de stock y funciones de reentrenamiento.
@@ -78,17 +77,14 @@
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
 
-    // Función para añadir mensajes al DOM
     function addMessage(text, sender) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}-message`;
         messageDiv.textContent = text;
         chatWindow.appendChild(messageDiv);
-        // Scroll automático hacia abajo
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
-    // Función para comunicarse con el backend del chatbot
     async function sendMessage() {
         const query = userInput.value.trim();
         if (query === '') return;
@@ -110,17 +106,16 @@
 
             const result = await response.json();
             
-            // Eliminar mensaje de carga
             chatWindow.removeChild(loadingMessage);
 
             if (!response.ok) {
-                addMessage(`❌ Error del Servidor: ${result.detail || 'Fallo desconocido'}`, 'ai');
+                addMessage(`Error del Servidor: ${result.detail || 'Fallo desconocido'}`, 'ai');
             } else {
                 addMessage(result.response, 'ai');
             }
 
         } catch (error) {
-            addMessage(`❌ Error de red: No se pudo conectar al servidor.`, 'ai');
+            addMessage(`Error de red: No se pudo conectar al servidor.`, 'ai');
         } finally {
             sendButton.disabled = false;
         }
