@@ -1,4 +1,3 @@
-pip install langchain-community pydantic
 ===========================================
 Documentación Técnica - Predictor de Stock (LSTM + Vertex AI)
 ===========================================
