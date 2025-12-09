@@ -1,0 +1,667 @@
+2025-12-09 01:46:36,512 - INFO - Sistema de Logging Centralizado inicializado.
+2025-12-09 02:06:19,882 - INFO - Sistema de Logging Centralizado inicializado correctamente.
+2025-12-09 02:06:19,883 - INFO - Directorio asegurado: C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models
+2025-12-09 02:06:19,885 - INFO - Directorio asegurado: C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\templates
+2025-12-09 02:06:19,886 - INFO - Directorio asegurado: C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\static
+2025-12-09 02:06:19,887 - INFO - FastAPI app creada y archivos estáticos montados en /static.
+2025-12-09 02:06:19,889 - INFO - Sistema de Logging Centralizado inicializado.
+2025-12-09 02:06:19,889 - INFO - Sistema de Logging Centralizado inicializado.
+2025-12-09 02:06:19,894 - INFO - Información de la empresa cargada.
+2025-12-09 02:06:19,894 - INFO - Información de la empresa cargada.
+2025-12-09 02:06:19,896 - INFO - FAQs cargadas: 6 entradas.
+2025-12-09 02:06:19,896 - INFO - FAQs cargadas: 6 entradas.
+2025-12-09 02:06:19,897 - INFO - Columnas de features definidas: 13 columnas.
+2025-12-09 02:06:19,897 - INFO - Columnas de features definidas: 13 columnas.
+2025-12-09 02:06:19,899 - INFO - Configuración de rutas de modelos y datos completada.
+2025-12-09 02:06:19,899 - INFO - Configuración de rutas de modelos y datos completada.
+2025-12-09 02:06:19,901 - INFO - Esquema NuevaFuncion1Input definido.
+2025-12-09 02:06:19,901 - INFO - Esquema NuevaFuncion1Input definido.
+2025-12-09 02:06:19,903 - INFO - Esquema NuevaFuncion2Input definido.
+2025-12-09 02:06:19,903 - INFO - Esquema NuevaFuncion2Input definido.
+2025-12-09 02:06:19,906 - INFO - Esquema PrediccionProductoInput definido.
+2025-12-09 02:06:19,906 - INFO - Esquema PrediccionProductoInput definido.
+2025-12-09 02:06:19,909 - INFO - Esquema PrediccionGeneralInput definido.
+2025-12-09 02:06:19,909 - INFO - Esquema PrediccionGeneralInput definido.
+2025-12-09 02:06:19,912 - INFO - Esquema AgregarRegistrosInput definido.
+2025-12-09 02:06:19,912 - INFO - Esquema AgregarRegistrosInput definido.
+2025-12-09 02:06:19,915 - INFO - Esquema AjustarModeloInput definido.
+2025-12-09 02:06:19,915 - INFO - Esquema AjustarModeloInput definido.
+2025-12-09 02:06:19,917 - INFO - Herramientas para chatbot definidas: 6 herramientas.
+2025-12-09 02:06:19,917 - INFO - Herramientas para chatbot definidas: 6 herramientas.
+2025-12-09 02:06:19,919 - INFO - Esquema PredictRequest definido.
+2025-12-09 02:06:19,919 - INFO - Esquema PredictRequest definido.
+2025-12-09 02:06:19,921 - INFO - Esquema RestockRequest definido.
+2025-12-09 02:06:19,921 - INFO - Esquema RestockRequest definido.
+2025-12-09 02:06:19,924 - INFO - Esquema ConclusionRequest definido.
+2025-12-09 02:06:19,924 - INFO - Esquema ConclusionRequest definido.
+2025-12-09 02:06:19,928 - INFO - Esquema ChatQuery definido.
+2025-12-09 02:06:19,928 - INFO - Esquema ChatQuery definido.
+2025-12-09 02:06:19,939 - INFO - Iniciando carga de recursos en startup_event.
+2025-12-09 02:06:19,939 - INFO - Iniciando carga de recursos en startup_event.
+2025-12-09 02:06:19,941 - INFO - Cargando modelo desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\best_model.keras
+2025-12-09 02:06:19,941 - INFO - Cargando modelo desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\best_model.keras
+2025-12-09 02:06:20,244 - INFO - Cargando scaler_X desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\scaler_X.pkl
+2025-12-09 02:06:20,244 - INFO - Cargando scaler_X desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\scaler_X.pkl
+2025-12-09 02:06:20,293 - INFO - Cargando scaler_Y desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\scaler_y.pkl
+2025-12-09 02:06:20,293 - INFO - Cargando scaler_Y desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\scaler_y.pkl
+2025-12-09 02:06:20,297 - INFO - Modelo y scalers cargados.
+2025-12-09 02:06:20,297 - INFO - Modelo y scalers cargados.
+2025-12-09 02:06:20,300 - INFO - Cargando dataset histórico desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\dataset_limpio_quantity_on_hand.csv
+2025-12-09 02:06:20,300 - INFO - Cargando dataset histórico desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\dataset_limpio_quantity_on_hand.csv
+2025-12-09 02:06:20,374 - INFO - Dataset histórico cargado: 5023 filas.
+2025-12-09 02:06:20,374 - INFO - Dataset histórico cargado: 5023 filas.
+2025-12-09 02:06:20,378 - INFO - Cargando productos desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\products.csv
+2025-12-09 02:06:20,378 - INFO - Cargando productos desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\products.csv
+2025-12-09 02:06:20,384 - INFO - Productos cargados: 30 entradas.
+2025-12-09 02:06:20,384 - INFO - Productos cargados: 30 entradas.
+2025-12-09 02:06:20,386 - INFO - Productos únicos en DF_CLEAN: 400
+2025-12-09 02:06:20,386 - INFO - Productos únicos en DF_CLEAN: 400
+2025-12-09 02:06:20,388 - INFO - Productos únicos en DF_PRODUCTS: 30
+2025-12-09 02:06:20,388 - INFO - Productos únicos en DF_PRODUCTS: 30
+2025-12-09 02:06:20,390 - INFO - Productos comunes disponibles: 30, display: 30
+2025-12-09 02:06:20,390 - INFO - Productos comunes disponibles: 30, display: 30
+2025-12-09 02:06:20,392 - INFO - Inicializando Vertex AI.
+2025-12-09 02:06:20,392 - INFO - Inicializando Vertex AI.
+2025-12-09 02:06:20,394 - INFO - Vertex AI inicializado.
+2025-12-09 02:06:20,394 - INFO - Vertex AI inicializado.
+2025-12-09 02:06:20,396 - INFO - Inicializando LLM RAG.
+2025-12-09 02:06:20,396 - INFO - Inicializando LLM RAG.
+2025-12-09 02:06:20,402 - INFO - Inicializando LLM Tool con bind_tools.
+2025-12-09 02:06:20,402 - INFO - Inicializando LLM Tool con bind_tools.
+2025-12-09 02:06:20,432 - INFO - LLMs inicializados.
+2025-12-09 02:06:20,432 - INFO - LLMs inicializados.
+2025-12-09 02:06:20,434 - INFO - Todos los recursos cargados correctamente al iniciar.
+2025-12-09 02:06:20,434 - INFO - Todos los recursos cargados correctamente al iniciar.
+2025-12-09 02:06:35,717 - INFO - Iniciando /logs.
+2025-12-09 02:06:35,717 - INFO - Iniciando /logs.
+2025-12-09 02:06:35,747 - INFO - Logs leídos del archivo.
+2025-12-09 02:06:35,747 - INFO - Logs leídos del archivo.
+2025-12-09 02:06:35,748 - INFO - HTML de logs generado.
+2025-12-09 02:06:35,748 - INFO - HTML de logs generado.
+2025-12-09 02:06:39,439 - INFO - Iniciando /final-predict.
+2025-12-09 02:06:39,439 - INFO - Iniciando /final-predict.
+2025-12-09 02:06:39,443 - INFO - Cargando plantilla final_predict.html.
+2025-12-09 02:06:39,443 - INFO - Cargando plantilla final_predict.html.
+2025-12-09 02:06:39,448 - INFO - Plantilla procesada y lista.
+2025-12-09 02:06:39,448 - INFO - Plantilla procesada y lista.
+2025-12-09 02:06:45,655 - INFO - Iniciando /chatbot.
+2025-12-09 02:06:45,655 - INFO - Iniciando /chatbot.
+2025-12-09 02:06:45,665 - INFO - Cargando plantilla chatbot.html.
+2025-12-09 02:06:45,665 - INFO - Cargando plantilla chatbot.html.
+2025-12-09 02:06:45,780 - INFO - Plantilla cargada.
+2025-12-09 02:06:45,780 - INFO - Plantilla cargada.
+2025-12-09 02:06:54,008 - INFO - Iniciando /api/chatbot con query: Hola
+2025-12-09 02:06:54,008 - INFO - Iniciando /api/chatbot con query: Hola
+2025-12-09 02:06:54,011 - INFO - Consulta recibida: Hola
+2025-12-09 02:06:54,011 - INFO - Consulta recibida: Hola
+2025-12-09 02:06:54,015 - INFO - Iniciando main_chatbot con query: Hola
+2025-12-09 02:06:54,015 - INFO - Iniciando main_chatbot con query: Hola
+2025-12-09 02:06:54,018 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:06:54,018 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:06:54,021 - INFO - Iniciando responder_basico con query: Hola
+2025-12-09 02:06:54,021 - INFO - Iniciando responder_basico con query: Hola
+2025-12-09 02:06:54,024 - INFO - Coincidencia con saludo detectada.
+2025-12-09 02:06:54,024 - INFO - Coincidencia con saludo detectada.
+2025-12-09 02:06:54,025 - INFO - Respuesta básica generada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:06:54,025 - INFO - Respuesta básica generada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:06:54,027 - INFO - Respuesta básica seleccionada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:06:54,027 - INFO - Respuesta básica seleccionada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:06:54,029 - INFO - Respuesta final: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gest...
+2025-12-09 02:06:54,029 - INFO - Respuesta final: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gest...
+2025-12-09 02:06:54,031 - INFO - Proceso completado en 0.0193s
+2025-12-09 02:06:54,031 - INFO - Proceso completado en 0.0193s
+2025-12-09 02:06:54,032 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 0.0193s)
+2025-12-09 02:06:54,032 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 0.0193s)
+2025-12-09 02:06:54,038 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:06:54.011449] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:06:54,038 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:06:54.011449] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:06:54,039 - INFO -   [DETALLE_FLUJO] -> QUERY: Hola
+2025-12-09 02:06:54,039 - INFO -   [DETALLE_FLUJO] -> QUERY: Hola
+2025-12-09 02:06:54,041 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Hola
+2025-12-09 02:06:54,041 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Hola
+2025-12-09 02:06:54,043 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:06:54,043 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:06:54,045 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:06:54,045 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:06:54,046 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: Coincidencia con 'Saludo'.
+2025-12-09 02:06:54,046 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: Coincidencia con 'Saludo'.
+2025-12-09 02:06:54,048 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta Básica.
+2025-12-09 02:06:54,048 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta Básica.
+2025-12-09 02:06:54,053 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:06:54,053 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:06:54,055 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:06:54.030758] FIN DE PROCESO. Duración: 0.0193s
+2025-12-09 02:06:54,055 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:06:54.030758] FIN DE PROCESO. Duración: 0.0193s
+2025-12-09 02:06:54,057 - INFO - -------------------------------------------------
+2025-12-09 02:06:54,057 - INFO - -------------------------------------------------
+2025-12-09 02:08:33,170 - INFO - Iniciando /logs.
+2025-12-09 02:08:33,170 - INFO - Iniciando /logs.
+2025-12-09 02:08:33,192 - INFO - Logs leídos del archivo.
+2025-12-09 02:08:33,192 - INFO - Logs leídos del archivo.
+2025-12-09 02:08:33,193 - INFO - HTML de logs generado.
+2025-12-09 02:08:33,193 - INFO - HTML de logs generado.
+2025-12-09 02:09:12,898 - INFO - Iniciando /logs.
+2025-12-09 02:09:12,898 - INFO - Iniciando /logs.
+2025-12-09 02:09:12,927 - INFO - Logs leídos del archivo.
+2025-12-09 02:09:12,927 - INFO - Logs leídos del archivo.
+2025-12-09 02:09:12,929 - INFO - HTML de logs generado.
+2025-12-09 02:09:12,929 - INFO - HTML de logs generado.
+2025-12-09 02:09:18,799 - INFO - Iniciando /api/chatbot con query: Hola
+2025-12-09 02:09:18,799 - INFO - Iniciando /api/chatbot con query: Hola
+2025-12-09 02:09:18,803 - INFO - Consulta recibida: Hola
+2025-12-09 02:09:18,803 - INFO - Consulta recibida: Hola
+2025-12-09 02:09:18,806 - INFO - Iniciando main_chatbot con query: Hola
+2025-12-09 02:09:18,806 - INFO - Iniciando main_chatbot con query: Hola
+2025-12-09 02:09:18,808 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:09:18,808 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:09:18,810 - INFO - Iniciando responder_basico con query: Hola
+2025-12-09 02:09:18,810 - INFO - Iniciando responder_basico con query: Hola
+2025-12-09 02:09:18,812 - INFO - Coincidencia con saludo detectada.
+2025-12-09 02:09:18,812 - INFO - Coincidencia con saludo detectada.
+2025-12-09 02:09:18,814 - INFO - Respuesta básica generada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:18,814 - INFO - Respuesta básica generada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:18,820 - INFO - Respuesta básica seleccionada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:18,820 - INFO - Respuesta básica seleccionada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:18,823 - INFO - Respuesta final: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gest...
+2025-12-09 02:09:18,823 - INFO - Respuesta final: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gest...
+2025-12-09 02:09:18,825 - INFO - Proceso completado en 0.0222s
+2025-12-09 02:09:18,825 - INFO - Proceso completado en 0.0222s
+2025-12-09 02:09:18,826 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 0.0222s)
+2025-12-09 02:09:18,826 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 0.0222s)
+2025-12-09 02:09:18,828 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:09:18.803026] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:09:18,828 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:09:18.803026] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:09:18,830 - INFO -   [DETALLE_FLUJO] -> QUERY: Hola
+2025-12-09 02:09:18,830 - INFO -   [DETALLE_FLUJO] -> QUERY: Hola
+2025-12-09 02:09:18,836 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Hola
+2025-12-09 02:09:18,836 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Hola
+2025-12-09 02:09:18,838 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:09:18,838 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:09:18,840 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:09:18,840 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:09:18,842 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: Coincidencia con 'Saludo'.
+2025-12-09 02:09:18,842 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: Coincidencia con 'Saludo'.
+2025-12-09 02:09:18,844 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta Básica.
+2025-12-09 02:09:18,844 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta Básica.
+2025-12-09 02:09:18,846 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:18,846 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:18,852 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:09:18.825184] FIN DE PROCESO. Duración: 0.0222s
+2025-12-09 02:09:18,852 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:09:18.825184] FIN DE PROCESO. Duración: 0.0222s
+2025-12-09 02:09:18,854 - INFO - -------------------------------------------------
+2025-12-09 02:09:18,854 - INFO - -------------------------------------------------
+2025-12-09 02:09:24,952 - INFO - Iniciando /chatbot.
+2025-12-09 02:09:24,952 - INFO - Iniciando /chatbot.
+2025-12-09 02:09:24,953 - INFO - Cargando plantilla chatbot.html.
+2025-12-09 02:09:24,953 - INFO - Cargando plantilla chatbot.html.
+2025-12-09 02:09:24,955 - INFO - Plantilla cargada.
+2025-12-09 02:09:24,955 - INFO - Plantilla cargada.
+2025-12-09 02:09:27,777 - INFO - Iniciando /api/chatbot con query: Hola
+2025-12-09 02:09:27,777 - INFO - Iniciando /api/chatbot con query: Hola
+2025-12-09 02:09:27,780 - INFO - Consulta recibida: Hola
+2025-12-09 02:09:27,780 - INFO - Consulta recibida: Hola
+2025-12-09 02:09:27,784 - INFO - Iniciando main_chatbot con query: Hola
+2025-12-09 02:09:27,784 - INFO - Iniciando main_chatbot con query: Hola
+2025-12-09 02:09:27,786 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:09:27,786 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:09:27,787 - INFO - Iniciando responder_basico con query: Hola
+2025-12-09 02:09:27,787 - INFO - Iniciando responder_basico con query: Hola
+2025-12-09 02:09:27,789 - INFO - Coincidencia con saludo detectada.
+2025-12-09 02:09:27,789 - INFO - Coincidencia con saludo detectada.
+2025-12-09 02:09:27,791 - INFO - Respuesta básica generada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:27,791 - INFO - Respuesta básica generada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:27,792 - INFO - Respuesta básica seleccionada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:27,792 - INFO - Respuesta básica seleccionada: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:27,795 - INFO - Respuesta final: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gest...
+2025-12-09 02:09:27,795 - INFO - Respuesta final: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gest...
+2025-12-09 02:09:27,801 - INFO - Proceso completado en 0.0213s
+2025-12-09 02:09:27,801 - INFO - Proceso completado en 0.0213s
+2025-12-09 02:09:27,802 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 0.0213s)
+2025-12-09 02:09:27,802 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 0.0213s)
+2025-12-09 02:09:27,804 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:09:27.780582] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:09:27,804 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:09:27.780582] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:09:27,806 - INFO -   [DETALLE_FLUJO] -> QUERY: Hola
+2025-12-09 02:09:27,806 - INFO -   [DETALLE_FLUJO] -> QUERY: Hola
+2025-12-09 02:09:27,808 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Hola
+2025-12-09 02:09:27,808 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Hola
+2025-12-09 02:09:27,809 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:09:27,809 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:09:27,815 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:09:27,815 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:09:27,816 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: Coincidencia con 'Saludo'.
+2025-12-09 02:09:27,816 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: Coincidencia con 'Saludo'.
+2025-12-09 02:09:27,818 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta Básica.
+2025-12-09 02:09:27,818 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta Básica.
+2025-12-09 02:09:27,820 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:27,820 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Buenas noches, soy **Supermercado El Despensa**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:09:27,822 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:09:27.801865] FIN DE PROCESO. Duración: 0.0213s
+2025-12-09 02:09:27,822 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:09:27.801865] FIN DE PROCESO. Duración: 0.0213s
+2025-12-09 02:09:27,823 - INFO - -------------------------------------------------
+2025-12-09 02:09:27,823 - INFO - -------------------------------------------------
+2025-12-09 02:09:51,086 - INFO - Iniciando /logs.
+2025-12-09 02:09:51,086 - INFO - Iniciando /logs.
+2025-12-09 02:09:51,110 - INFO - Logs leídos del archivo.
+2025-12-09 02:09:51,110 - INFO - Logs leídos del archivo.
+2025-12-09 02:09:51,114 - INFO - HTML de logs generado.
+2025-12-09 02:09:51,114 - INFO - HTML de logs generado.
+2025-12-09 02:10:31,393 - INFO - Iniciando /api/chatbot con query: gracias
+2025-12-09 02:10:31,393 - INFO - Iniciando /api/chatbot con query: gracias
+2025-12-09 02:10:31,399 - INFO - Consulta recibida: gracias
+2025-12-09 02:10:31,399 - INFO - Consulta recibida: gracias
+2025-12-09 02:10:31,402 - INFO - Iniciando main_chatbot con query: gracias
+2025-12-09 02:10:31,402 - INFO - Iniciando main_chatbot con query: gracias
+2025-12-09 02:10:31,404 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:10:31,404 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:10:31,407 - INFO - Iniciando responder_basico con query: gracias
+2025-12-09 02:10:31,407 - INFO - Iniciando responder_basico con query: gracias
+2025-12-09 02:10:31,410 - INFO - Coincidencia con agradecimiento detectada.
+2025-12-09 02:10:31,410 - INFO - Coincidencia con agradecimiento detectada.
+2025-12-09 02:10:31,414 - INFO - Respuesta básica generada: ¡Para eso estamos! Me da gusto ayudarte. ¿Necesitas algo más?
+2025-12-09 02:10:31,414 - INFO - Respuesta básica generada: ¡Para eso estamos! Me da gusto ayudarte. ¿Necesitas algo más?
+2025-12-09 02:10:31,418 - INFO - Respuesta básica seleccionada: ¡Para eso estamos! Me da gusto ayudarte. ¿Necesitas algo más?
+2025-12-09 02:10:31,418 - INFO - Respuesta básica seleccionada: ¡Para eso estamos! Me da gusto ayudarte. ¿Necesitas algo más?
+2025-12-09 02:10:31,420 - INFO - Respuesta final: ¡Para eso estamos! Me da gusto ayudarte. ¿Necesitas algo más?...
+2025-12-09 02:10:31,420 - INFO - Respuesta final: ¡Para eso estamos! Me da gusto ayudarte. ¿Necesitas algo más?...
+2025-12-09 02:10:31,422 - INFO - Proceso completado en 0.0230s
+2025-12-09 02:10:31,422 - INFO - Proceso completado en 0.0230s
+2025-12-09 02:10:31,424 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 0.0230s)
+2025-12-09 02:10:31,424 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 0.0230s)
+2025-12-09 02:10:31,426 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:10:31.399504] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:10:31,426 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:10:31.399504] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:10:31,432 - INFO -   [DETALLE_FLUJO] -> QUERY: gracias
+2025-12-09 02:10:31,432 - INFO -   [DETALLE_FLUJO] -> QUERY: gracias
+2025-12-09 02:10:31,434 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: gracias
+2025-12-09 02:10:31,434 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: gracias
+2025-12-09 02:10:31,436 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:10:31,436 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:10:31,437 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:10:31,437 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:10:31,439 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: Coincidencia con 'Agradecimiento'.
+2025-12-09 02:10:31,439 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: Coincidencia con 'Agradecimiento'.
+2025-12-09 02:10:31,441 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta Básica.
+2025-12-09 02:10:31,441 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta Básica.
+2025-12-09 02:10:31,449 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: ¡Para eso estamos! Me da gusto ayudarte. ¿Necesitas algo más?
+2025-12-09 02:10:31,449 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: ¡Para eso estamos! Me da gusto ayudarte. ¿Necesitas algo más?
+2025-12-09 02:10:31,451 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:10:31.422501] FIN DE PROCESO. Duración: 0.0230s
+2025-12-09 02:10:31,451 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:10:31.422501] FIN DE PROCESO. Duración: 0.0230s
+2025-12-09 02:10:31,452 - INFO - -------------------------------------------------
+2025-12-09 02:10:31,452 - INFO - -------------------------------------------------
+2025-12-09 02:11:22,361 - INFO - Iniciando /logs.
+2025-12-09 02:11:22,361 - INFO - Iniciando /logs.
+2025-12-09 02:13:45,703 - INFO - Logs leídos del archivo.
+2025-12-09 02:13:45,703 - INFO - Logs leídos del archivo.
+2025-12-09 02:13:45,705 - INFO - HTML de logs generado.
+2025-12-09 02:13:45,705 - INFO - HTML de logs generado.
+2025-12-09 02:13:45,710 - INFO - Iniciando /api/chatbot con query: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:45,710 - INFO - Iniciando /api/chatbot con query: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:45,712 - INFO - Consulta recibida: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:45,712 - INFO - Consulta recibida: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:45,715 - INFO - Iniciando main_chatbot con query: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:45,715 - INFO - Iniciando main_chatbot con query: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:45,717 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:13:45,717 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:13:45,719 - INFO - Iniciando responder_basico con query: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:45,719 - INFO - Iniciando responder_basico con query: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:45,725 - INFO - No se encontró coincidencia básica en responder_basico.
+2025-12-09 02:13:45,725 - INFO - No se encontró coincidencia básica en responder_basico.
+2025-12-09 02:13:45,727 - INFO - Iniciando verificación de function calling.
+2025-12-09 02:13:45,727 - INFO - Iniciando verificación de function calling.
+2025-12-09 02:13:45,730 - INFO - Iniciando responder_tool_calling con query: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:45,730 - INFO - Iniciando responder_tool_calling con query: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:48,787 - ERROR - Error en tool calling: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:13:48,787 - ERROR - Error en tool calling: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:13:48,795 - INFO - Iniciando lógica RAG/FAQ.
+2025-12-09 02:13:48,795 - INFO - Iniciando lógica RAG/FAQ.
+2025-12-09 02:13:48,799 - INFO - Iniciando responder_faqs con query: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:48,799 - INFO - Iniciando responder_faqs con query: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:49,585 - INFO - Calculando ranking de FAQs por similitud TF-IDF.
+2025-12-09 02:13:49,585 - INFO - Calculando ranking de FAQs por similitud TF-IDF.
+2025-12-09 02:13:49,607 - INFO - Ranking de FAQs calculado: Top score 0.1622
+2025-12-09 02:13:49,607 - INFO - Ranking de FAQs calculado: Top score 0.1622
+2025-12-09 02:13:49,611 - INFO - Prompt para RAG preparado y enviado.
+2025-12-09 02:13:49,611 - INFO - Prompt para RAG preparado y enviado.
+2025-12-09 02:13:52,649 - ERROR - Error en RAG: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:13:52,649 - ERROR - Error en RAG: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:13:52,656 - INFO - Respuesta RAG/FAQ seleccionada: Disculpe, ocurrió un error al consultar la base de conocimiento.
+2025-12-09 02:13:52,656 - INFO - Respuesta RAG/FAQ seleccionada: Disculpe, ocurrió un error al consultar la base de conocimiento.
+2025-12-09 02:13:52,661 - INFO - Respuesta final: Disculpe, ocurrió un error al consultar la base de conocimiento....
+2025-12-09 02:13:52,661 - INFO - Respuesta final: Disculpe, ocurrió un error al consultar la base de conocimiento....
+2025-12-09 02:13:52,670 - INFO - Proceso completado en 6.9574s
+2025-12-09 02:13:52,670 - INFO - Proceso completado en 6.9574s
+2025-12-09 02:13:52,675 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 6.9574s)
+2025-12-09 02:13:52,675 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 6.9574s)
+2025-12-09 02:13:52,680 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:13:45.712826] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:13:52,680 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:13:45.712826] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:13:52,688 - INFO -   [DETALLE_FLUJO] -> QUERY: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:52,688 - INFO -   [DETALLE_FLUJO] -> QUERY: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:52,690 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:52,690 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:52,693 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:13:52,693 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:13:52,698 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:13:52,698 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:13:52,701 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: No se encontró coincidencia básica.
+2025-12-09 02:13:52,701 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: No se encontró coincidencia básica.
+2025-12-09 02:13:52,704 - INFO -   [DETALLE_FLUJO] -> PASO 2: Verificación de Function Calling.
+2025-12-09 02:13:52,704 - INFO -   [DETALLE_FLUJO] -> PASO 2: Verificación de Function Calling.
+2025-12-09 02:13:52,707 - INFO -   [DETALLE_FLUJO] -> LÓGICA FUNCTION CALLING: Ejecutando modelo Gemini para detección de herramienta.
+2025-12-09 02:13:52,707 - INFO -   [DETALLE_FLUJO] -> LÓGICA FUNCTION CALLING: Ejecutando modelo Gemini para detección de herramienta.
+2025-12-09 02:13:52,710 - INFO -   [DETALLE_FLUJO] -> ERROR TOOL CALLING: Fallo en la invocación de LangChain/Gemini. Detalle: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:13:52,710 - INFO -   [DETALLE_FLUJO] -> ERROR TOOL CALLING: Fallo en la invocación de LangChain/Gemini. Detalle: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:13:52,716 - INFO -   [DETALLE_FLUJO] -> PASO 3: Ejecutando Lógica RAG/FAQ.
+2025-12-09 02:13:52,716 - INFO -   [DETALLE_FLUJO] -> PASO 3: Ejecutando Lógica RAG/FAQ.
+2025-12-09 02:13:52,718 - INFO -   [DETALLE_FLUJO] -> LÓGICA RAG/FAQ: Ejecutando modelo Gemini para consulta de FAQs.
+2025-12-09 02:13:52,718 - INFO -   [DETALLE_FLUJO] -> LÓGICA RAG/FAQ: Ejecutando modelo Gemini para consulta de FAQs.
+2025-12-09 02:13:52,720 - INFO -   [DETALLE_FLUJO] -> RANKING DE FAQs POR COINCIDENCIA:
+2025-12-09 02:13:52,720 - INFO -   [DETALLE_FLUJO] -> RANKING DE FAQs POR COINCIDENCIA:
+2025-12-09 02:13:52,722 - INFO -   [DETALLE_FLUJO] - FAQ 1 (score: 0.1622): ¿Qué tipo de modelo de IA usan para predecir el stock? Utilizamos una Red Neuronal Recurrente (RNN) con arquitectura LSTM (Long Short-Term Memory) para optimizar el inventario de productos frescos.
+2025-12-09 02:13:52,722 - INFO -   [DETALLE_FLUJO] - FAQ 1 (score: 0.1622): ¿Qué tipo de modelo de IA usan para predecir el stock? Utilizamos una Red Neuronal Recurrente (RNN) con arquitectura LSTM (Long Short-Term Memory) para optimizar el inventario de productos frescos.
+2025-12-09 02:13:52,724 - INFO -   [DETALLE_FLUJO] - FAQ 2 (score: 0.0829): ¿Cuál es el umbral de reabastecimiento que utiliza el sistema? El umbral es de 20 unidades, si el stock es menor o igual a 20, se marca la alerta.
+2025-12-09 02:13:52,724 - INFO -   [DETALLE_FLUJO] - FAQ 2 (score: 0.0829): ¿Cuál es el umbral de reabastecimiento que utiliza el sistema? El umbral es de 20 unidades, si el stock es menor o igual a 20, se marca la alerta.
+2025-12-09 02:13:52,726 - INFO -   [DETALLE_FLUJO] - FAQ 3 (score: 0.0455): ¿Cuál es el horario de atención? Nuestras tiendas están abiertas de Lunes a Sábado de 8:00 AM a 9:00 PM, y los Domingos de 9:00 AM a 7:00 PM.
+2025-12-09 02:13:52,726 - INFO -   [DETALLE_FLUJO] - FAQ 3 (score: 0.0455): ¿Cuál es el horario de atención? Nuestras tiendas están abiertas de Lunes a Sábado de 8:00 AM a 9:00 PM, y los Domingos de 9:00 AM a 7:00 PM.
+2025-12-09 02:13:52,732 - INFO -   [DETALLE_FLUJO] - FAQ 4 (score: 0.0116): ¿Cuántos productos manejan en promedio? Manejamos más de 18,000 SKU (productos) en nuestras tiendas principales.
+2025-12-09 02:13:52,732 - INFO -   [DETALLE_FLUJO] - FAQ 4 (score: 0.0116): ¿Cuántos productos manejan en promedio? Manejamos más de 18,000 SKU (productos) en nuestras tiendas principales.
+2025-12-09 02:13:52,734 - INFO -   [DETALLE_FLUJO] - FAQ 5 (score: 0.0104): ¿Tienen servicio a domicilio? Sí, ofrecemos servicio a domicilio gratuito en compras mayores a $50 en zonas de cobertura.
+2025-12-09 02:13:52,734 - INFO -   [DETALLE_FLUJO] - FAQ 5 (score: 0.0104): ¿Tienen servicio a domicilio? Sí, ofrecemos servicio a domicilio gratuito en compras mayores a $50 en zonas de cobertura.
+2025-12-09 02:13:52,736 - INFO -   [DETALLE_FLUJO] - FAQ 6 (score: 0.0101): ¿Cómo puedo aplicar a un puesto de trabajo? Visita nuestra sección 'Trabaja con Nosotros' en la web o envía tu CV a rrhh@eldespensa.com.
+2025-12-09 02:13:52,736 - INFO -   [DETALLE_FLUJO] - FAQ 6 (score: 0.0101): ¿Cómo puedo aplicar a un puesto de trabajo? Visita nuestra sección 'Trabaja con Nosotros' en la web o envía tu CV a rrhh@eldespensa.com.
+2025-12-09 02:13:52,739 - INFO -   [DETALLE_FLUJO] -> SELECCIÓN: Usando top 3 FAQs para el prompt (scores: [np.float64(0.16221182332745188), np.float64(0.0829000106818981), np.float64(0.045450750732960524)]).
+2025-12-09 02:13:52,739 - INFO -   [DETALLE_FLUJO] -> SELECCIÓN: Usando top 3 FAQs para el prompt (scores: [np.float64(0.16221182332745188), np.float64(0.0829000106818981), np.float64(0.045450750732960524)]).
+2025-12-09 02:13:52,741 - INFO -   [DETALLE_FLUJO] -> PROMPT ENVIADO AL LLM:
+2025-12-09 02:13:52,741 - INFO -   [DETALLE_FLUJO] -> PROMPT ENVIADO AL LLM:
+2025-12-09 02:13:52,743 - INFO -   [DETALLE_FLUJO] Eres un asistente de soporte de Supermercado El Despensa. Utiliza la siguiente información de la empresa y las FAQs para responder a la pregunta del usuario. 
+    Si la respuesta a la pregunta no está en el contexto, indica amablemente que no tienes la información.
+    
+    --- Información de la Empresa ---
+    Nombre: Supermercado El Despensa (Fundada en 1998). Misión: Ofrecer la mejor calidad en alimentos frescos y abarrotes, facilitando la vida de nuestros clientes con precios justos y variedad.
+    Horario de atención: Lunes a Sábado: 8:00 AM - 9:00 PM. Domingos: 9:00 AM - 7:00 PM.
+    
+    --- Base de Conocimiento (FAQs seleccionadas por relevancia) ---
+    ¿Qué tipo de modelo de IA usan para predecir el stock? Utilizamos una Red Neuronal Recurrente (RNN) con arquitectura LSTM (Long Short-Term Memory) para optimizar el inventario de productos frescos.
+¿Cuál es el umbral de reabastecimiento que utiliza el sistema? El umbral es de 20 unidades, si el stock es menor o igual a 20, se marca la alerta.
+¿Cuál es el horario de atención? Nuestras tiendas están abiertas de Lunes a Sábado de 8:00 AM a 9:00 PM, y los Domingos de 9:00 AM a 7:00 PM.
+    
+    --- Pregunta del Usuario ---
+    Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:52,743 - INFO -   [DETALLE_FLUJO] Eres un asistente de soporte de Supermercado El Despensa. Utiliza la siguiente información de la empresa y las FAQs para responder a la pregunta del usuario. 
+    Si la respuesta a la pregunta no está en el contexto, indica amablemente que no tienes la información.
+    
+    --- Información de la Empresa ---
+    Nombre: Supermercado El Despensa (Fundada en 1998). Misión: Ofrecer la mejor calidad en alimentos frescos y abarrotes, facilitando la vida de nuestros clientes con precios justos y variedad.
+    Horario de atención: Lunes a Sábado: 8:00 AM - 9:00 PM. Domingos: 9:00 AM - 7:00 PM.
+    
+    --- Base de Conocimiento (FAQs seleccionadas por relevancia) ---
+    ¿Qué tipo de modelo de IA usan para predecir el stock? Utilizamos una Red Neuronal Recurrente (RNN) con arquitectura LSTM (Long Short-Term Memory) para optimizar el inventario de productos frescos.
+¿Cuál es el umbral de reabastecimiento que utiliza el sistema? El umbral es de 20 unidades, si el stock es menor o igual a 20, se marca la alerta.
+¿Cuál es el horario de atención? Nuestras tiendas están abiertas de Lunes a Sábado de 8:00 AM a 9:00 PM, y los Domingos de 9:00 AM a 7:00 PM.
+    
+    --- Pregunta del Usuario ---
+    Quiero hacer una prediccion del producto pdct0008 para el dia 02 de enero del 2025
+2025-12-09 02:13:52,749 - INFO -   [DETALLE_FLUJO] -> ERROR RAG: Fallo en la invocación de LangChain/Gemini. Detalle: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:13:52,749 - INFO -   [DETALLE_FLUJO] -> ERROR RAG: Fallo en la invocación de LangChain/Gemini. Detalle: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:13:52,751 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta RAG/FAQ.
+2025-12-09 02:13:52,751 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta RAG/FAQ.
+2025-12-09 02:13:52,752 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Disculpe, ocurrió un error al consultar la base de conocimiento.
+2025-12-09 02:13:52,752 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Disculpe, ocurrió un error al consultar la base de conocimiento.
+2025-12-09 02:13:52,754 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:13:52.670184] FIN DE PROCESO. Duración: 6.9574s
+2025-12-09 02:13:52,754 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:13:52.670184] FIN DE PROCESO. Duración: 6.9574s
+2025-12-09 02:13:52,756 - INFO - -------------------------------------------------
+2025-12-09 02:13:52,756 - INFO - -------------------------------------------------
+2025-12-09 02:13:52,765 - INFO - Iniciando /logs.
+2025-12-09 02:13:52,765 - INFO - Iniciando /logs.
+2025-12-09 02:13:52,785 - INFO - Logs leídos del archivo.
+2025-12-09 02:13:52,785 - INFO - Logs leídos del archivo.
+2025-12-09 02:13:52,787 - INFO - HTML de logs generado.
+2025-12-09 02:13:52,787 - INFO - HTML de logs generado.
+2025-12-09 02:13:52,944 - INFO - Iniciando /chatbot.
+2025-12-09 02:13:52,944 - INFO - Iniciando /chatbot.
+2025-12-09 02:13:52,953 - INFO - Cargando plantilla chatbot.html.
+2025-12-09 02:13:52,953 - INFO - Cargando plantilla chatbot.html.
+2025-12-09 02:13:52,965 - INFO - Plantilla cargada.
+2025-12-09 02:13:52,965 - INFO - Plantilla cargada.
+2025-12-09 02:14:20,024 - INFO - Sistema de Logging Centralizado inicializado correctamente.
+2025-12-09 02:14:20,025 - INFO - Directorio asegurado: C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models
+2025-12-09 02:14:20,026 - INFO - Directorio asegurado: C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\templates
+2025-12-09 02:14:20,027 - INFO - Directorio asegurado: C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\static
+2025-12-09 02:14:20,028 - INFO - FastAPI app creada y archivos estáticos montados en /static.
+2025-12-09 02:14:20,030 - INFO - Sistema de Logging Centralizado inicializado.
+2025-12-09 02:14:20,030 - INFO - Sistema de Logging Centralizado inicializado.
+2025-12-09 02:14:20,031 - INFO - Información de la empresa cargada.
+2025-12-09 02:14:20,031 - INFO - Información de la empresa cargada.
+2025-12-09 02:14:20,032 - INFO - FAQs cargadas: 6 entradas.
+2025-12-09 02:14:20,032 - INFO - FAQs cargadas: 6 entradas.
+2025-12-09 02:14:20,033 - INFO - Columnas de features definidas: 13 columnas.
+2025-12-09 02:14:20,033 - INFO - Columnas de features definidas: 13 columnas.
+2025-12-09 02:14:20,034 - INFO - Configuración de rutas de modelos y datos completada.
+2025-12-09 02:14:20,034 - INFO - Configuración de rutas de modelos y datos completada.
+2025-12-09 02:14:20,036 - INFO - Esquema NuevaFuncion1Input definido.
+2025-12-09 02:14:20,036 - INFO - Esquema NuevaFuncion1Input definido.
+2025-12-09 02:14:20,038 - INFO - Esquema NuevaFuncion2Input definido.
+2025-12-09 02:14:20,038 - INFO - Esquema NuevaFuncion2Input definido.
+2025-12-09 02:14:20,040 - INFO - Esquema PrediccionProductoInput definido.
+2025-12-09 02:14:20,040 - INFO - Esquema PrediccionProductoInput definido.
+2025-12-09 02:14:20,042 - INFO - Esquema PrediccionGeneralInput definido.
+2025-12-09 02:14:20,042 - INFO - Esquema PrediccionGeneralInput definido.
+2025-12-09 02:14:20,043 - INFO - Esquema AgregarRegistrosInput definido.
+2025-12-09 02:14:20,043 - INFO - Esquema AgregarRegistrosInput definido.
+2025-12-09 02:14:20,045 - INFO - Esquema AjustarModeloInput definido.
+2025-12-09 02:14:20,045 - INFO - Esquema AjustarModeloInput definido.
+2025-12-09 02:14:20,047 - INFO - Herramientas para chatbot definidas: 6 herramientas.
+2025-12-09 02:14:20,047 - INFO - Herramientas para chatbot definidas: 6 herramientas.
+2025-12-09 02:14:20,048 - INFO - Esquema PredictRequest definido.
+2025-12-09 02:14:20,048 - INFO - Esquema PredictRequest definido.
+2025-12-09 02:14:20,049 - INFO - Esquema RestockRequest definido.
+2025-12-09 02:14:20,049 - INFO - Esquema RestockRequest definido.
+2025-12-09 02:14:20,051 - INFO - Esquema ConclusionRequest definido.
+2025-12-09 02:14:20,051 - INFO - Esquema ConclusionRequest definido.
+2025-12-09 02:14:20,054 - INFO - Esquema ChatQuery definido.
+2025-12-09 02:14:20,054 - INFO - Esquema ChatQuery definido.
+2025-12-09 02:14:20,064 - INFO - Iniciando carga de recursos en startup_event.
+2025-12-09 02:14:20,064 - INFO - Iniciando carga de recursos en startup_event.
+2025-12-09 02:14:20,065 - INFO - Cargando modelo desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\best_model.keras
+2025-12-09 02:14:20,065 - INFO - Cargando modelo desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\best_model.keras
+2025-12-09 02:14:20,348 - INFO - Cargando scaler_X desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\scaler_X.pkl
+2025-12-09 02:14:20,348 - INFO - Cargando scaler_X desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\scaler_X.pkl
+2025-12-09 02:14:20,385 - INFO - Cargando scaler_Y desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\scaler_y.pkl
+2025-12-09 02:14:20,385 - INFO - Cargando scaler_Y desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\scaler_y.pkl
+2025-12-09 02:14:20,391 - INFO - Modelo y scalers cargados.
+2025-12-09 02:14:20,391 - INFO - Modelo y scalers cargados.
+2025-12-09 02:14:20,392 - INFO - Cargando dataset histórico desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\dataset_limpio_quantity_on_hand.csv
+2025-12-09 02:14:20,392 - INFO - Cargando dataset histórico desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\dataset_limpio_quantity_on_hand.csv
+2025-12-09 02:14:20,439 - INFO - Dataset histórico cargado: 5023 filas.
+2025-12-09 02:14:20,439 - INFO - Dataset histórico cargado: 5023 filas.
+2025-12-09 02:14:20,442 - INFO - Cargando productos desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\products.csv
+2025-12-09 02:14:20,442 - INFO - Cargando productos desde C:\Users\Dell\Desktop\ups\Ciclo 7\Aprendizaje Automático\P1\Entorno\web\models\products.csv
+2025-12-09 02:14:20,448 - INFO - Productos cargados: 30 entradas.
+2025-12-09 02:14:20,448 - INFO - Productos cargados: 30 entradas.
+2025-12-09 02:14:20,451 - INFO - Productos únicos en DF_CLEAN: 400
+2025-12-09 02:14:20,451 - INFO - Productos únicos en DF_CLEAN: 400
+2025-12-09 02:14:20,453 - INFO - Productos únicos en DF_PRODUCTS: 30
+2025-12-09 02:14:20,453 - INFO - Productos únicos en DF_PRODUCTS: 30
+2025-12-09 02:14:20,455 - INFO - Productos comunes disponibles: 30, display: 30
+2025-12-09 02:14:20,455 - INFO - Productos comunes disponibles: 30, display: 30
+2025-12-09 02:14:20,457 - INFO - Inicializando Vertex AI.
+2025-12-09 02:14:20,457 - INFO - Inicializando Vertex AI.
+2025-12-09 02:14:20,459 - INFO - Vertex AI inicializado.
+2025-12-09 02:14:20,459 - INFO - Vertex AI inicializado.
+2025-12-09 02:14:20,461 - INFO - Inicializando LLM RAG.
+2025-12-09 02:14:20,461 - INFO - Inicializando LLM RAG.
+2025-12-09 02:14:20,463 - INFO - Inicializando LLM Tool con bind_tools.
+2025-12-09 02:14:20,463 - INFO - Inicializando LLM Tool con bind_tools.
+2025-12-09 02:14:20,489 - INFO - LLMs inicializados.
+2025-12-09 02:14:20,489 - INFO - LLMs inicializados.
+2025-12-09 02:14:20,491 - INFO - Todos los recursos cargados correctamente al iniciar.
+2025-12-09 02:14:20,491 - INFO - Todos los recursos cargados correctamente al iniciar.
+2025-12-09 02:14:36,495 - INFO - Iniciando /chatbot.
+2025-12-09 02:14:36,495 - INFO - Iniciando /chatbot.
+2025-12-09 02:14:36,500 - INFO - Cargando plantilla chatbot.html.
+2025-12-09 02:14:36,500 - INFO - Cargando plantilla chatbot.html.
+2025-12-09 02:14:36,504 - INFO - Plantilla cargada.
+2025-12-09 02:14:36,504 - INFO - Plantilla cargada.
+2025-12-09 02:14:45,827 - INFO - Iniciando /final-predict.
+2025-12-09 02:14:45,827 - INFO - Iniciando /final-predict.
+2025-12-09 02:14:45,836 - INFO - Cargando plantilla final_predict.html.
+2025-12-09 02:14:45,836 - INFO - Cargando plantilla final_predict.html.
+2025-12-09 02:14:45,840 - INFO - Plantilla procesada y lista.
+2025-12-09 02:14:45,840 - INFO - Plantilla procesada y lista.
+2025-12-09 02:14:51,268 - INFO - Iniciando /chatbot.
+2025-12-09 02:14:51,268 - INFO - Iniciando /chatbot.
+2025-12-09 02:14:51,272 - INFO - Cargando plantilla chatbot.html.
+2025-12-09 02:14:51,272 - INFO - Cargando plantilla chatbot.html.
+2025-12-09 02:14:51,274 - INFO - Plantilla cargada.
+2025-12-09 02:14:51,274 - INFO - Plantilla cargada.
+2025-12-09 02:15:00,794 - INFO - Iniciando /api/chatbot con query: Hola
+2025-12-09 02:15:00,794 - INFO - Iniciando /api/chatbot con query: Hola
+2025-12-09 02:15:00,795 - INFO - Consulta recibida: Hola
+2025-12-09 02:15:00,795 - INFO - Consulta recibida: Hola
+2025-12-09 02:15:00,796 - INFO - Iniciando main_chatbot con query: Hola
+2025-12-09 02:15:00,796 - INFO - Iniciando main_chatbot con query: Hola
+2025-12-09 02:15:00,798 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:15:00,798 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:15:00,799 - INFO - Iniciando responder_basico con query: Hola
+2025-12-09 02:15:00,799 - INFO - Iniciando responder_basico con query: Hola
+2025-12-09 02:15:00,802 - INFO - Coincidencia con saludo detectada.
+2025-12-09 02:15:00,802 - INFO - Coincidencia con saludo detectada.
+2025-12-09 02:15:00,804 - INFO - Respuesta básica generada: Buenas noches, soy Supermercado El Despensa. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:15:00,804 - INFO - Respuesta básica generada: Buenas noches, soy Supermercado El Despensa. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:15:00,805 - INFO - Respuesta básica seleccionada: Buenas noches, soy Supermercado El Despensa. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:15:00,805 - INFO - Respuesta básica seleccionada: Buenas noches, soy Supermercado El Despensa. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:15:00,807 - INFO - Respuesta final: Buenas noches, soy Supermercado El Despensa. ¿En qué puedo ayudarte hoy con tu inventario y gestión?...
+2025-12-09 02:15:00,807 - INFO - Respuesta final: Buenas noches, soy Supermercado El Despensa. ¿En qué puedo ayudarte hoy con tu inventario y gestión?...
+2025-12-09 02:15:00,810 - INFO - Proceso completado en 0.0147s
+2025-12-09 02:15:00,810 - INFO - Proceso completado en 0.0147s
+2025-12-09 02:15:00,812 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 0.0147s)
+2025-12-09 02:15:00,812 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 0.0147s)
+2025-12-09 02:15:00,818 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:15:00.795910] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:15:00,818 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:15:00.795910] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:15:00,820 - INFO -   [DETALLE_FLUJO] -> QUERY: Hola
+2025-12-09 02:15:00,820 - INFO -   [DETALLE_FLUJO] -> QUERY: Hola
+2025-12-09 02:15:00,822 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Hola
+2025-12-09 02:15:00,822 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Hola
+2025-12-09 02:15:00,823 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:15:00,823 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:15:00,825 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:15:00,825 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:15:00,827 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: Coincidencia con 'Saludo'.
+2025-12-09 02:15:00,827 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: Coincidencia con 'Saludo'.
+2025-12-09 02:15:00,832 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta Básica.
+2025-12-09 02:15:00,832 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta Básica.
+2025-12-09 02:15:00,834 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Buenas noches, soy Supermercado El Despensa. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:15:00,834 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Buenas noches, soy Supermercado El Despensa. ¿En qué puedo ayudarte hoy con tu inventario y gestión?
+2025-12-09 02:15:00,836 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:15:00.810647] FIN DE PROCESO. Duración: 0.0147s
+2025-12-09 02:15:00,836 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:15:00.810647] FIN DE PROCESO. Duración: 0.0147s
+2025-12-09 02:15:00,838 - INFO - -------------------------------------------------
+2025-12-09 02:15:00,838 - INFO - -------------------------------------------------
+2025-12-09 02:15:46,301 - INFO - Iniciando /api/chatbot con query: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:46,301 - INFO - Iniciando /api/chatbot con query: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:46,303 - INFO - Consulta recibida: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:46,303 - INFO - Consulta recibida: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:46,306 - INFO - Iniciando main_chatbot con query: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:46,306 - INFO - Iniciando main_chatbot con query: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:46,308 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:15:46,308 - INFO - Iniciando verificación de respuestas básicas.
+2025-12-09 02:15:46,311 - INFO - Iniciando responder_basico con query: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:46,311 - INFO - Iniciando responder_basico con query: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:46,315 - INFO - No se encontró coincidencia básica en responder_basico.
+2025-12-09 02:15:46,315 - INFO - No se encontró coincidencia básica en responder_basico.
+2025-12-09 02:15:46,318 - INFO - Iniciando verificación de function calling.
+2025-12-09 02:15:46,318 - INFO - Iniciando verificación de function calling.
+2025-12-09 02:15:46,321 - INFO - Iniciando responder_tool_calling con query: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:46,321 - INFO - Iniciando responder_tool_calling con query: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:49,305 - ERROR - Error en tool calling: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:15:49,305 - ERROR - Error en tool calling: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:15:49,306 - INFO - Iniciando lógica RAG/FAQ.
+2025-12-09 02:15:49,306 - INFO - Iniciando lógica RAG/FAQ.
+2025-12-09 02:15:49,308 - INFO - Iniciando responder_faqs con query: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:49,308 - INFO - Iniciando responder_faqs con query: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:49,393 - INFO - Calculando ranking de FAQs por similitud TF-IDF.
+2025-12-09 02:15:49,393 - INFO - Calculando ranking de FAQs por similitud TF-IDF.
+2025-12-09 02:15:49,399 - INFO - Ranking de FAQs calculado: Top score 0.1622
+2025-12-09 02:15:49,399 - INFO - Ranking de FAQs calculado: Top score 0.1622
+2025-12-09 02:15:49,400 - INFO - Prompt para RAG preparado y enviado.
+2025-12-09 02:15:49,400 - INFO - Prompt para RAG preparado y enviado.
+2025-12-09 02:15:52,610 - ERROR - Error en RAG: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:15:52,610 - ERROR - Error en RAG: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:15:52,613 - INFO - Respuesta RAG/FAQ seleccionada: Disculpe, ocurrió un error al consultar la base de conocimiento.
+2025-12-09 02:15:52,613 - INFO - Respuesta RAG/FAQ seleccionada: Disculpe, ocurrió un error al consultar la base de conocimiento.
+2025-12-09 02:15:52,616 - INFO - Respuesta final: Disculpe, ocurrió un error al consultar la base de conocimiento....
+2025-12-09 02:15:52,616 - INFO - Respuesta final: Disculpe, ocurrió un error al consultar la base de conocimiento....
+2025-12-09 02:15:52,621 - INFO - Proceso completado en 6.3165s
+2025-12-09 02:15:52,621 - INFO - Proceso completado en 6.3165s
+2025-12-09 02:15:52,626 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 6.3165s)
+2025-12-09 02:15:52,626 - INFO - --- NUEVA CONSULTA DE CHATBOT FINALIZADA --- (Duración: 6.3165s)
+2025-12-09 02:15:52,636 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:15:46.303911] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:15:52,636 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:15:46.303911] INICIO DE PROCESO: Consulta recibida.
+2025-12-09 02:15:52,642 - INFO -   [DETALLE_FLUJO] -> QUERY: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:52,642 - INFO -   [DETALLE_FLUJO] -> QUERY: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:52,647 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:52,647 - INFO -   [DETALLE_FLUJO] -> ENTRADA DE TEXTO: Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:52,652 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:15:52,652 - INFO -   [DETALLE_FLUJO] -> PASO 1: Verificación de Respuestas Básicas (Saludo/Despedida).
+2025-12-09 02:15:52,660 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:15:52,660 - INFO -   [DETALLE_FLUJO] -> LÓGICA BÁSICA: Ejecutando verificación de Regex (saludos/despedidas).
+2025-12-09 02:15:52,663 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: No se encontró coincidencia básica.
+2025-12-09 02:15:52,663 - INFO -   [DETALLE_FLUJO] -> DECISIÓN: No se encontró coincidencia básica.
+2025-12-09 02:15:52,666 - INFO -   [DETALLE_FLUJO] -> PASO 2: Verificación de Function Calling.
+2025-12-09 02:15:52,666 - INFO -   [DETALLE_FLUJO] -> PASO 2: Verificación de Function Calling.
+2025-12-09 02:15:52,669 - INFO -   [DETALLE_FLUJO] -> LÓGICA FUNCTION CALLING: Ejecutando modelo Gemini para detección de herramienta.
+2025-12-09 02:15:52,669 - INFO -   [DETALLE_FLUJO] -> LÓGICA FUNCTION CALLING: Ejecutando modelo Gemini para detección de herramienta.
+2025-12-09 02:15:52,676 - INFO -   [DETALLE_FLUJO] -> ERROR TOOL CALLING: Fallo en la invocación de LangChain/Gemini. Detalle: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:15:52,676 - INFO -   [DETALLE_FLUJO] -> ERROR TOOL CALLING: Fallo en la invocación de LangChain/Gemini. Detalle: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:15:52,679 - INFO -   [DETALLE_FLUJO] -> PASO 3: Ejecutando Lógica RAG/FAQ.
+2025-12-09 02:15:52,679 - INFO -   [DETALLE_FLUJO] -> PASO 3: Ejecutando Lógica RAG/FAQ.
+2025-12-09 02:15:52,681 - INFO -   [DETALLE_FLUJO] -> LÓGICA RAG/FAQ: Ejecutando modelo Gemini para consulta de FAQs.
+2025-12-09 02:15:52,681 - INFO -   [DETALLE_FLUJO] -> LÓGICA RAG/FAQ: Ejecutando modelo Gemini para consulta de FAQs.
+2025-12-09 02:15:52,683 - INFO -   [DETALLE_FLUJO] -> RANKING DE FAQs POR COINCIDENCIA:
+2025-12-09 02:15:52,683 - INFO -   [DETALLE_FLUJO] -> RANKING DE FAQs POR COINCIDENCIA:
+2025-12-09 02:15:52,686 - INFO -   [DETALLE_FLUJO] - FAQ 1 (score: 0.1622): ¿Qué tipo de modelo de IA usan para predecir el stock? Utilizamos una Red Neuronal Recurrente (RNN) con arquitectura LSTM (Long Short-Term Memory) para optimizar el inventario de productos frescos.
+2025-12-09 02:15:52,686 - INFO -   [DETALLE_FLUJO] - FAQ 1 (score: 0.1622): ¿Qué tipo de modelo de IA usan para predecir el stock? Utilizamos una Red Neuronal Recurrente (RNN) con arquitectura LSTM (Long Short-Term Memory) para optimizar el inventario de productos frescos.
+2025-12-09 02:15:52,692 - INFO -   [DETALLE_FLUJO] - FAQ 2 (score: 0.0829): ¿Cuál es el umbral de reabastecimiento que utiliza el sistema? El umbral es de 20 unidades, si el stock es menor o igual a 20, se marca la alerta.
+2025-12-09 02:15:52,692 - INFO -   [DETALLE_FLUJO] - FAQ 2 (score: 0.0829): ¿Cuál es el umbral de reabastecimiento que utiliza el sistema? El umbral es de 20 unidades, si el stock es menor o igual a 20, se marca la alerta.
+2025-12-09 02:15:52,694 - INFO -   [DETALLE_FLUJO] - FAQ 3 (score: 0.0455): ¿Cuál es el horario de atención? Nuestras tiendas están abiertas de Lunes a Sábado de 8:00 AM a 9:00 PM, y los Domingos de 9:00 AM a 7:00 PM.
+2025-12-09 02:15:52,694 - INFO -   [DETALLE_FLUJO] - FAQ 3 (score: 0.0455): ¿Cuál es el horario de atención? Nuestras tiendas están abiertas de Lunes a Sábado de 8:00 AM a 9:00 PM, y los Domingos de 9:00 AM a 7:00 PM.
+2025-12-09 02:15:52,696 - INFO -   [DETALLE_FLUJO] - FAQ 4 (score: 0.0116): ¿Cuántos productos manejan en promedio? Manejamos más de 18,000 SKU (productos) en nuestras tiendas principales.
+2025-12-09 02:15:52,696 - INFO -   [DETALLE_FLUJO] - FAQ 4 (score: 0.0116): ¿Cuántos productos manejan en promedio? Manejamos más de 18,000 SKU (productos) en nuestras tiendas principales.
+2025-12-09 02:15:52,698 - INFO -   [DETALLE_FLUJO] - FAQ 5 (score: 0.0104): ¿Tienen servicio a domicilio? Sí, ofrecemos servicio a domicilio gratuito en compras mayores a $50 en zonas de cobertura.
+2025-12-09 02:15:52,698 - INFO -   [DETALLE_FLUJO] - FAQ 5 (score: 0.0104): ¿Tienen servicio a domicilio? Sí, ofrecemos servicio a domicilio gratuito en compras mayores a $50 en zonas de cobertura.
+2025-12-09 02:15:52,699 - INFO -   [DETALLE_FLUJO] - FAQ 6 (score: 0.0101): ¿Cómo puedo aplicar a un puesto de trabajo? Visita nuestra sección 'Trabaja con Nosotros' en la web o envía tu CV a rrhh@eldespensa.com.
+2025-12-09 02:15:52,699 - INFO -   [DETALLE_FLUJO] - FAQ 6 (score: 0.0101): ¿Cómo puedo aplicar a un puesto de trabajo? Visita nuestra sección 'Trabaja con Nosotros' en la web o envía tu CV a rrhh@eldespensa.com.
+2025-12-09 02:15:52,705 - INFO -   [DETALLE_FLUJO] -> SELECCIÓN: Usando top 3 FAQs para el prompt (scores: [np.float64(0.16221182332745188), np.float64(0.0829000106818981), np.float64(0.045450750732960524)]).
+2025-12-09 02:15:52,705 - INFO -   [DETALLE_FLUJO] -> SELECCIÓN: Usando top 3 FAQs para el prompt (scores: [np.float64(0.16221182332745188), np.float64(0.0829000106818981), np.float64(0.045450750732960524)]).
+2025-12-09 02:15:52,708 - INFO -   [DETALLE_FLUJO] -> PROMPT ENVIADO AL LLM:
+2025-12-09 02:15:52,708 - INFO -   [DETALLE_FLUJO] -> PROMPT ENVIADO AL LLM:
+2025-12-09 02:15:52,710 - INFO -   [DETALLE_FLUJO] Eres un asistente de soporte de Supermercado El Despensa. Utiliza la siguiente información de la empresa y las FAQs para responder a la pregunta del usuario. 
+    Si la respuesta a la pregunta no está en el contexto, indica amablemente que no tienes la información.
+    
+    --- Información de la Empresa ---
+    Nombre: Supermercado El Despensa (Fundada en 1998). Misión: Ofrecer la mejor calidad en alimentos frescos y abarrotes, facilitando la vida de nuestros clientes con precios justos y variedad.
+    Horario de atención: Lunes a Sábado: 8:00 AM - 9:00 PM. Domingos: 9:00 AM - 7:00 PM.
+    
+    --- Base de Conocimiento (FAQs seleccionadas por relevancia) ---
+    ¿Qué tipo de modelo de IA usan para predecir el stock? Utilizamos una Red Neuronal Recurrente (RNN) con arquitectura LSTM (Long Short-Term Memory) para optimizar el inventario de productos frescos.
+¿Cuál es el umbral de reabastecimiento que utiliza el sistema? El umbral es de 20 unidades, si el stock es menor o igual a 20, se marca la alerta.
+¿Cuál es el horario de atención? Nuestras tiendas están abiertas de Lunes a Sábado de 8:00 AM a 9:00 PM, y los Domingos de 9:00 AM a 7:00 PM.
+    
+    --- Pregunta del Usuario ---
+    Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:52,710 - INFO -   [DETALLE_FLUJO] Eres un asistente de soporte de Supermercado El Despensa. Utiliza la siguiente información de la empresa y las FAQs para responder a la pregunta del usuario. 
+    Si la respuesta a la pregunta no está en el contexto, indica amablemente que no tienes la información.
+    
+    --- Información de la Empresa ---
+    Nombre: Supermercado El Despensa (Fundada en 1998). Misión: Ofrecer la mejor calidad en alimentos frescos y abarrotes, facilitando la vida de nuestros clientes con precios justos y variedad.
+    Horario de atención: Lunes a Sábado: 8:00 AM - 9:00 PM. Domingos: 9:00 AM - 7:00 PM.
+    
+    --- Base de Conocimiento (FAQs seleccionadas por relevancia) ---
+    ¿Qué tipo de modelo de IA usan para predecir el stock? Utilizamos una Red Neuronal Recurrente (RNN) con arquitectura LSTM (Long Short-Term Memory) para optimizar el inventario de productos frescos.
+¿Cuál es el umbral de reabastecimiento que utiliza el sistema? El umbral es de 20 unidades, si el stock es menor o igual a 20, se marca la alerta.
+¿Cuál es el horario de atención? Nuestras tiendas están abiertas de Lunes a Sábado de 8:00 AM a 9:00 PM, y los Domingos de 9:00 AM a 7:00 PM.
+    
+    --- Pregunta del Usuario ---
+    Quiero hacer una predicción del producto "pdct0008" para el día 02 de enero del 2025
+2025-12-09 02:15:52,712 - INFO -   [DETALLE_FLUJO] -> ERROR RAG: Fallo en la invocación de LangChain/Gemini. Detalle: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:15:52,712 - INFO -   [DETALLE_FLUJO] -> ERROR RAG: Fallo en la invocación de LangChain/Gemini. Detalle: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+2025-12-09 02:15:52,714 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta RAG/FAQ.
+2025-12-09 02:15:52,714 - INFO -   [DETALLE_FLUJO] -> FLUJO FINAL: Retornando Respuesta RAG/FAQ.
+2025-12-09 02:15:52,715 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Disculpe, ocurrió un error al consultar la base de conocimiento.
+2025-12-09 02:15:52,715 - INFO -   [DETALLE_FLUJO] -> RESULTADO FINAL: Disculpe, ocurrió un error al consultar la base de conocimiento.
+2025-12-09 02:15:52,723 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:15:52.620389] FIN DE PROCESO. Duración: 6.3165s
+2025-12-09 02:15:52,723 - INFO -   [DETALLE_FLUJO] [2025-12-09T02:15:52.620389] FIN DE PROCESO. Duración: 6.3165s
+2025-12-09 02:15:52,725 - INFO - -------------------------------------------------
+2025-12-09 02:15:52,725 - INFO - -------------------------------------------------

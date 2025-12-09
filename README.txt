@@ -1,4 +1,3 @@
-pip install langchain-community pydantic
 ===========================================
 Documentación Técnica - Predictor de Stock (LSTM + Vertex AI)
 ===========================================
@@ -121,12 +120,4 @@ La función retrain_model opera bajo los siguientes principios:
   * Secuencia: Se crea una nueva secuencia de entrada (7 días antes del último dato) y el objetivo (el último stock añadido) para el reentrenamiento.
   * Proceso: El modelo global (MODEL`) se actualiza mediante un único epoch (epochs=1) sobre el pequeño dataset de nuevas secuencias, garantizando un aprendizaje rápido sin sobrecargar la VM.
 
-----------------------
-6. CHATBOT
-----------------------
- --- EJEMPLOS DE USO (Para probar la lógica) ---
-print(main_chatbot("Hola, ¿puedo agregar nuevos registros de productos en la BD?"))
-print(main_chatbot("Quiero predecir el stock de pdct0015 para el 2026-01-01"))
-print(main_chatbot("Muchas gracias"))
-print(main_chatbot("Qué modelo usan para el stock?"))
 
