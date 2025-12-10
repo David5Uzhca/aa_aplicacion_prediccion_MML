@@ -8,6 +8,8 @@ import os
 import re
 import sys
 import time
+import requests
+import json
 import numpy as np
 import pandas as pd
 import pickle
@@ -47,6 +49,7 @@ LOG_FILE = BASE_DIR / "app_logs.log"
 
 logger = logging.getLogger('my_api_logger')
 logger.setLevel(logging.INFO)
+logger.propagate = False
 
 # Handler para archivo (con rotación)
 file_handler = RotatingFileHandler(
@@ -109,7 +112,7 @@ logger.info("Sistema de Logging Centralizado inicializado.")
 
 VERTEX_PROJECT_ID = "prediccion-478120"
 VERTEX_REGION = "us-central1"
-VERTEX_MODEL = "gemini-1.5-flash"
+VERTEX_MODEL = "gemini-2.5-flash"
 
 EMPRESA_INFO = {
     "nombre": "Supermercado El Despensa",
@@ -207,11 +210,42 @@ def nueva_funcion_2(departamento: str) -> str:
     logger.info(f"Resultado de nueva_funcion_2: {result}")
     return result
 
-def predecir_stock_producto(product_id: str, target_date: str) -> str:
-    logger.info(f"Iniciando predecir_stock_producto con product_id: {product_id}, target_date: {target_date}")
-    result = f"Activando la predicción de stock para el producto {product_id} para la fecha {target_date}. Revisa la interfaz web para el resultado."
-    logger.info(f"Resultado de predecir_stock_producto: {result}")
-    return result
+LOCAL_API_BASE_URL = "http://10.128.0.2:8000"
+def predecir_stock_producto(product_id: str, target_date: str) -> str:    
+    url = f"{LOCAL_API_BASE_URL}/api/predict"
+    payload = {
+        "product_id": product_id,
+        "date": target_date
+    }
+    
+    try:
+        response = requests.post(url, json=payload, timeout=10)
+        response.raise_for_status()
+        
+        data = response.json()
+        
+        stock_predicho = data.get('quantity_on_hand', 0)
+        nombre_producto = data.get('product_name', product_id)
+        fecha_predicha = data.get('fecha_predicha', target_date)
+        
+        umbral = 20 # El umbral de reabastecimiento es 20 unidades
+        
+        if stock_predicho <= umbral:
+            conclusion = f"El producto {nombre_producto} ({product_id}) cuenta con un stock predicho de {stock_predicho:.2f} para la fecha {fecha_predicha}, por lo que REQUIERE REABASTECIMIENTO URGENTE."
+        else:
+            conclusion = f"El producto {nombre_producto} ({product_id}) cuenta con un stock predicho de {stock_predicho:.2f} para la fecha {fecha_predicha}, por lo que no requiere reabastecimiento en este momento."
+            
+        return conclusion
+    
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
+            return f"Error: No se encontraron datos históricos o el producto {product_id} no existe. [Código 404]"
+        return f"Error HTTP al llamar al servicio de predicción: {e}"
+    
+    except requests.exceptions.RequestException as e:
+        return f"Error de conexión: No se pudo conectar al endpoint de predicción ({LOCAL_API_BASE_URL}). Asegúrese de que Uvicorn esté escuchando."
+    except Exception as e:
+        return f"Error inesperado al procesar la predicción: {e}"
 
 def predecir_stock_general(target_date: str) -> str:
     logger.info(f"Iniciando predecir_stock_general con target_date: {target_date}")
@@ -877,7 +911,8 @@ async def api_conclusion(req: ConclusionRequest):
             ),
             (
                 "human",
-                "Analiza los siguientes datos. El umbral de reabastecimiento es 20 unidades. Genera una conclusión en español "
+                "Analiza los siguientes datos. El umbral de reabastecimiento es 20 unidades. Genera una conclusión en españo "
+		"sin frases en negrita (**frase**)"
                 "cubriendo: (1) Productos críticos (stock <= 5), (2) Resumen del porcentaje de productos que necesitan reabastecimiento (stock <= 20), "
                 "y (3) Una recomendación de acción breve. \n\n--- DATOS ---\n{data}"
             )
