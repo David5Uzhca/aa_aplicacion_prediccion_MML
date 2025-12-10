@@ -353,7 +353,7 @@ async def responder_tool_calling(query: str, log_entries: List[str]) -> str:
                 try:
                     result = await tool_function(**tool_args)
                     log_entries.append(f"  -> RESULTADO FUNCIÓN: Éxito. {result}")
-                    return f" FUNCIÓN LLAMADA: {tool_name}. Mensaje de éxito: {result}"
+                    return result
                 except Exception as e:
                     log_entries.append(f"  -> RESULTADO FUNCIÓN: Error al ejecutar la función de Python. Detalle: {e}")
                     return f"Error: La función {tool_name} falló al ejecutarse. Detalle: {e}"
