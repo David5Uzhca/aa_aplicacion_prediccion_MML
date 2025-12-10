@@ -278,7 +278,7 @@ def responder_basico(query: str, log_entries: List[str]) -> str:
         if 5 <= hora < 12: momento = "Buenos días"
         elif 12 <= hora < 19: momento = "Buenas tardes"
         else: momento = "Buenas noches"
-        return f"{momento}, soy **{EMPRESA_INFO['nombre']}**. ¿En qué puedo ayudarte hoy con tu inventario y gestión?"
+        return f"{momento}, soy {EMPRESA_INFO['nombre']}. ¿En qué puedo ayudarte hoy con tu inventario y gestión?"
     
     if re.search(patrones_agradecimiento, query_lower):
         log_entries.append("  -> DECISIÓN: Coincidencia con 'Agradecimiento'.")
@@ -303,7 +303,7 @@ def responder_faqs(query: str, log_entries: List[str]) -> str:
 
     prompt_texto = f"""
     Eres un asistente de soporte de {EMPRESA_INFO['nombre']}. Utiliza la siguiente información de la empresa y las FAQs para responder a la pregunta del usuario. 
-    Si la respuesta a la pregunta no está en el contexto, indica amablemente que no tienes la información.
+    Si la respuesta a la pregunta no está en el contexto, indica amablemente que no tienes la información. en la respuesta no uses frases con negrita (**frase**)
     
     --- Información de la Empresa ---
     Nombre: {EMPRESA_INFO['nombre']} (Fundada en {EMPRESA_INFO['fundacion']}). Misión: {EMPRESA_INFO['mision']}
