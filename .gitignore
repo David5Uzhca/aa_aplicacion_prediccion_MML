@@ -1,20 +1,53 @@
+# =========================================================
+# IGNORAR BASICO DE PYTHON Y DIRECTORIOS
+# =========================================================
 # Archivos de Python
 __pycache__/
 *.pyc
+*.pyo
+*~
+*.swp
+*.bak
 
-# Entorno Virtual
+# Entornos Virtuales
 .venv/
 venv/
+env/
+/bin/
+/lib/
+/include/
 
-# Modelos y Datos Grandes (CORRECCIÓN DE RUTA)
-models/best_model.h5
-models/best_model.keras
-models/scaler_X.pkl
-models/scaler_y.pkl
-models/secuencias_quantity_on_hand.pkl
-models/*.csv
-models/*.xlsx
-models/*.pkl
+# IDE/Editor (VS Code, Nano, etc.)
+.vscode/
+.idea/
+.DS_Store
 
-# Archivos de Entorno (Claves secretas)
+# =========================================================
+# IGNORAR LOGS, TEMPORALES Y FASTAPI
+# =========================================================
+
+app_logs.log
+*.log
+
+checkpoints/
+*.tf/
+*.data-00000-of-00001
+*.index
+saved_model.pb
+tensorboard/
+tfjs-model/
+
+# =========================================================
+# IGNORAR MODELOS Y DATOS GRANDES
+# =========================================================
+
+/models/
+
+*.h5
+*.keras
+*.pkl
+*.csv
+*.xlsx
+*.pkl
+
 .env

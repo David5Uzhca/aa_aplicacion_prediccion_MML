@@ -1,27 +1,25 @@
 # ====================================================================
-# 1. IMPORTACIONES
+# 1. IMPORTACIONE
 # ====================================================================
+
 import json
 import logging
 import os
 import re
 import sys
-import requests
-import json
 import time
-import requests
-import json
 import numpy as np
 import pandas as pd
 import pickle
 import tensorflow as tf
-import httpx
+import httpx 
 
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, List
 from io import StringIO
 from logging.handlers import RotatingFileHandler
+
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -48,7 +46,7 @@ LOG_FILE = BASE_DIR / "app_logs.log"
 
 logger = logging.getLogger('my_api_logger')
 logger.setLevel(logging.INFO)
-logger.propagate = False
+logger.propagate = False 
 
 file_handler = RotatingFileHandler(
     LOG_FILE, maxBytes=1024*1024, backupCount=3, encoding='utf-8'
@@ -75,7 +73,7 @@ logger.info("Archivos estáticos montados en /static.")
 # 5. CONFIGURACIÓN GLOBAL Y CONSTANTES (Contexto y Autenticación)
 # ====================================================================
 
-# --- AUTENTICACIÓN: CONFIANZA EN EL SERVICE ACCOUNT DE LA VM ---
+# --- AUTENTICACIÓN: Confianza en el Service Account de la VM ---
 VERTEX_PROJECT_ID = "prediccion-478120"
 VERTEX_REGION = "us-central1"
 VERTEX_MODEL = "gemini-2.5-flash"
@@ -106,7 +104,6 @@ FEATURE_COLS = [
     "unit_cost", "total_value", "days_since_last_order", 
     "days_since_last_count", "days_to_expiration", "month", "day_of_week"
 ]
-logger.info(f"Columnas de features definidas: {len(FEATURE_COLS)} columnas.")
 
 MODEL_PATH = MODEL_DIR / "best_model.keras"
 SCALER_X_PATH = MODEL_DIR / "scaler_X.pkl"
@@ -132,6 +129,8 @@ llm_tool = None
 # ====================================================================
 # 6. DEFINICIÓN DE ESQUEMAS PYDANTIC Y STUBS (CHATBOT TOOLS)
 # ====================================================================
+
+# --- Schemas Pydantic ---
 class PredictRequest(BaseModel):
     product_id: str
     date: Optional[str] = None
@@ -182,20 +181,17 @@ def nueva_funcion_2(departamento: str) -> str:
     """Función de ejemplo 2: Simula la consulta del inventario histórico de un departamento específico."""
     return f"Consultando el historial de inventario del departamento de '{departamento}'. Resumen: El historial muestra alta rotación en las últimas 4 semanas."
 
-<<<<<<< HEAD
-LOCAL_API_BASE_URL = "http://localhost:8000" 
+LOCAL_API_BASE_URL = "http://localhost:8000" # Usamos localhost para httpx
+
 async def predecir_stock_producto(product_id: str, target_date: str) -> str:
-=======
-LOCAL_API_BASE_URL = "http://10.128.0.2:8000"
-def predecir_stock_producto(product_id: str, target_date: str) -> str:    
->>>>>>> 7f3cfa55acaf329c413b16f03a8923f6f033fcd9
+    """Llama al endpoint /api/predict (asíncrono) y devuelve el stock predicho."""
+    
     url = f"{LOCAL_API_BASE_URL}/api/predict"
     payload = {
         "product_id": product_id,
         "date": target_date
     }
     
-<<<<<<< HEAD
     async with httpx.AsyncClient(timeout=10) as client:
         try:
             response = await client.post(url, json=payload)
@@ -207,7 +203,7 @@ def predecir_stock_producto(product_id: str, target_date: str) -> str:
             nombre_producto = data.get('product_name', product_id)
             fecha_predicha = data.get('fecha_predicha', target_date)
             
-            umbral = 20 # El umbral de reabastecimiento es 20 unidades
+            umbral = 20
             
             if stock_predicho <= umbral:
                 conclusion = f"El producto {nombre_producto} ({product_id}) cuenta con un stock predicho de {stock_predicho:.2f} para la fecha {fecha_predicha}, por lo que REQUIERE REABASTECIMIENTO URGENTE."
@@ -225,36 +221,6 @@ def predecir_stock_producto(product_id: str, target_date: str) -> str:
             return f"Error de conexión: Fallo de red interno al intentar conectar con el servicio: {e}."
         except Exception as e:
             return f"Error inesperado al procesar la predicción: {e}"
-=======
-    try:
-        response = requests.post(url, json=payload, timeout=10)
-        response.raise_for_status()
-        
-        data = response.json()
-        
-        stock_predicho = data.get('quantity_on_hand', 0)
-        nombre_producto = data.get('product_name', product_id)
-        fecha_predicha = data.get('fecha_predicha', target_date)
-        
-        umbral = 20 # El umbral de reabastecimiento es 20 unidades
-        
-        if stock_predicho <= umbral:
-            conclusion = f"El producto {nombre_producto} ({product_id}) cuenta con un stock predicho de {stock_predicho:.2f} para la fecha {fecha_predicha}, por lo que REQUIERE REABASTECIMIENTO URGENTE."
-        else:
-            conclusion = f"El producto {nombre_producto} ({product_id}) cuenta con un stock predicho de {stock_predicho:.2f} para la fecha {fecha_predicha}, por lo que no requiere reabastecimiento en este momento."
-            
-        return conclusion
-    
-    except requests.exceptions.HTTPError as e:
-        if e.response.status_code == 404:
-            return f"Error: No se encontraron datos históricos o el producto {product_id} no existe. [Código 404]"
-        return f"Error HTTP al llamar al servicio de predicción: {e}"
-    
-    except requests.exceptions.RequestException as e:
-        return f"Error de conexión: No se pudo conectar al endpoint de predicción ({LOCAL_API_BASE_URL}). Asegúrese de que Uvicorn esté escuchando."
-    except Exception as e:
-        return f"Error inesperado al procesar la predicción: {e}"
->>>>>>> 7f3cfa55acaf329c413b16f03a8923f6f033fcd9
 
 def predecir_stock_general(target_date: str) -> str:
     """Llama al endpoint /api/restock para obtener la predicción de stock de todos los productos principales."""
@@ -278,11 +244,8 @@ TOOLS = [
 ]
 
 # ====================================================================
-# app.py - LÓGICA CHATBOT Y ML CORE (PARTE 2/3)
+# 7. LÓGICA UNIFICADA DEL CHATBOT
 # ====================================================================
-
-# --- 7. LÓGICA UNIFICADA DEL CHATBOT ---
-
 # 7.1 Respuestas Básicas
 def responder_basico(query: str, log_entries: List[str]) -> str:
     """Responde a saludos, agradecimientos y despedidas."""
@@ -312,7 +275,7 @@ def responder_basico(query: str, log_entries: List[str]) -> str:
     log_entries.append("  -> DECISIÓN: No se encontró coincidencia básica.")
     return ""
 
-# 7.2 Lógica RAG/FAQ
+# 7.2 Lógica RAG/FAQ (Síncrona)
 def responder_faqs(query: str, log_entries: List[str]) -> str:
     """Responde a las FAQs utilizando RAG sobre la base de conocimiento."""
     global llm_rag
@@ -348,7 +311,7 @@ def responder_faqs(query: str, log_entries: List[str]) -> str:
         log_entries.append(f"  -> ERROR RAG: Fallo en la invocación de LangChain/Gemini. Detalle: {e}")
         return "Disculpe, ocurrió un error al consultar la base de conocimiento."
 
-# 7.3 Lógica de Function Calling
+# 7.3 Lógica de Function Calling (Asíncrona)
 async def responder_tool_calling(query: str, log_entries: List[str]) -> str: 
     global llm_tool
     log_entries.append("  -> LÓGICA FUNCTION CALLING: Ejecutando modelo Gemini para detección de herramienta.")
@@ -374,7 +337,7 @@ async def responder_tool_calling(query: str, log_entries: List[str]) -> str:
                 try:
                     result = await tool_function(**tool_args)
                     log_entries.append(f"  -> RESULTADO FUNCIÓN: Éxito. {result}")
-                    return f"✅ FUNCIÓN LLAMADA: {tool_name}. Mensaje de éxito: {result}"
+                    return f" FUNCIÓN LLAMADA: {tool_name}. Mensaje de éxito: {result}"
                 except Exception as e:
                     log_entries.append(f"  -> RESULTADO FUNCIÓN: Error al ejecutar la función de Python. Detalle: {e}")
                     return f"Error: La función {tool_name} falló al ejecutarse. Detalle: {e}"
@@ -385,7 +348,7 @@ async def responder_tool_calling(query: str, log_entries: List[str]) -> str:
     log_entries.append("  -> DECISIÓN: No se detectó ninguna llamada a función. Pasando a RAG/FAQ.")
     return ""
 
-# 7.4 Función Principal del Chatbot
+# 7.4 Función Principal del Chatbot (Asíncrona)
 async def main_chatbot(query: str, log_entries: List[str]) -> str:
     log_entries.append("-> PASO 1: Verificación de Respuestas Básicas.")
     respuesta_basica = responder_basico(query, log_entries)
@@ -394,7 +357,7 @@ async def main_chatbot(query: str, log_entries: List[str]) -> str:
         return respuesta_basica
 
     log_entries.append("-> PASO 2: Verificación de Function Calling.")
-    respuesta_tool = await responder_tool_calling(query, log_entries)
+    respuesta_tool = await responder_tool_calling(query, log_entries) # AWAIT AQUÍ
     if respuesta_tool:
         log_entries.append("-> FLUJO FINAL: Retornando Resultado de Function Calling.")
         return respuesta_tool
@@ -407,8 +370,9 @@ async def main_chatbot(query: str, log_entries: List[str]) -> str:
 
 
 # ====================================================================
-# 8. CÓDIGO DE CARGA Y ML CORE
+# 8. CÓDIGO DE CARGA Y ML CORE (Funciones)
 # ====================================================================
+# Nota: predict_stock_by_date y retrain_model son síncronas
 
 def get_last_7_rows(product_id: str):
     """Obtiene las últimas 7 filas NO ESCALADAS de un producto, rellenando si es necesario."""
@@ -630,11 +594,11 @@ def process_external_data(uploaded_df: pd.DataFrame, log: str) -> dict:
     
     return {"success": retrain_result['success'], "log": log}
 
-    # ====================================================================
-# app.py - CARGA Y ENDPOINTS (PARTE 3/3)
+
+# ====================================================================
+# 9. Lógica de Carga al Inicio de la App
 # ====================================================================
 
-# --- 9. Lógica de Carga al Inicio de la App ---
 try:
     # 9.1 Carga de recursos de ML
     MODEL = tf.keras.models.load_model(str(MODEL_PATH))
@@ -679,95 +643,10 @@ except Exception as e:
 # 10. ENDPOINTS DE LA API
 # ====================================================================
 
-<<<<<<< HEAD
-@app.post("/api/retrain")
-async def api_retrain(req: Request):
-    logger.info("Iniciando /api/retrain.")
-    try:
-        new_data_list = await req.json()
-        logger.info(f"Datos recibidos en JSON: {len(new_data_list)} items.")
-        
-        if not new_data_list or not isinstance(new_data_list, list):
-            logger.error("Datos no válidos o vacíos.")
-            raise HTTPException(status_code=400, detail="Datos no válidos o vacíos para el reentrenamiento.")
-
-        new_data_df = pd.DataFrame(new_data_list)
-        logger.info(f"DataFrame creado: {len(new_data_df)} filas.")
-        new_data_df = new_data_df.dropna(subset=['quantity_on_hand'])
-        logger.info(f"Después de dropna quantity_on_hand: {len(new_data_df)}")
-        new_data_df['quantity_on_hand'] = new_data_df['quantity_on_hand'].apply(lambda x: max(0, float(x)))
-        logger.info("Quantity_on_hand ajustada a valores positivos.")
-        
-        result = retrain_model(new_data_df)
-        logger.info(f"Resultado de retrain: success={result['success']}")
-        
-        if not result['success']:
-             logger.error(f"Reentrenamiento fallido: {result['log']}")
-             raise HTTPException(status_code=500, detail=result['log'])
-             
-        return result
-
-    except Exception as e:
-        logger.critical(f"Error en /api/retrain: {e}")
-        raise HTTPException(status_code=500, detail=f"Error interno durante el reentrenamiento: {e}")
-
-
-@app.post("/api/conclusion")
-async def api_conclusion(req: ConclusionRequest):
-    logger.info("Iniciando /api/conclusion.")
-    global VERTEX_CLIENT_READY, VERTEX_MODEL
-
-    if not VERTEX_CLIENT_READY:
-        logger.error("Vertex AI no configurado.")
-        raise HTTPException(status_code=503, detail="El cliente de Vertex AI no está configurado.")
-        
-    if not req.results:
-        logger.warning("No hay resultados para analizar.")
-        return {"conclusion": "No hay resultados para analizar."}
-
-    data_str = "Resultados de Predicción de Stock:\n"
-    data_str += "---------------------------------------------------------\n"
-    data_str += "ID | Stock Predicho | Necesita Reabastecer\n"
-    data_str += "---|----------------|-----------------------\n"
-    
-    for item in req.results:
-        logger.info(f"Procesando item: {item.get('product_id')}")
-        needs_restock = "Sí" if item.get('needs_restock', False) or (item.get('quantity_on_hand', 0) <= 20 and 'needs_restock' not in item) else "No"
-        stock = f"{item.get('quantity_on_hand', 0):.2f}"
-        data_str += f"{item.get('product_id')} | {stock} | {needs_restock}\n"
-
-    logger.info("Data_str para prompt preparada.")
-    prompt_template = ChatPromptTemplate.from_messages(
-        [
-            (
-                "system",
-                "Eres un experto analista de inventario y gestión de almacén. Tu tarea es analizar los datos de predicción "
-                "de stock y generar una conclusión breve y orientada a la acción para la gerencia."
-            ),
-            (
-                "human",
-                "Analiza los siguientes datos. El umbral de reabastecimiento es 20 unidades. Genera una conclusión en españo "
-		"sin frases en negrita (**frase**)"
-                "cubriendo: (1) Productos críticos (stock <= 5), (2) Resumen del porcentaje de productos que necesitan reabastecimiento (stock <= 20), "
-                "y (3) Una recomendación de acción breve. \n\n--- DATOS ---\n{data}"
-            )
-        ]
-    )
-    logger.info("Prompt template definido.")
-    
-    llm = ChatVertexAI(
-        model_name=VERTEX_MODEL,
-        temperature=0.2,
-        project=VERTEX_PROJECT_ID,
-        location=VERTEX_REGION
-    )
-    logger.info("LLM para conclusión inicializado.")
-    chain = prompt_template | llm
-=======
 @app.post("/api/chatbot")
 async def api_chatbot(req: ChatQuery):
+    # ¡Función Asíncrona!
     log_entries: List[str] = []
->>>>>>> 5a9127d0611a6e36a5f13f930cdcbcd1a4632789
     
     try:
         start_time = time.time()
@@ -778,6 +657,7 @@ async def api_chatbot(req: ChatQuery):
              log_entries.append(f"-> ERROR: Cliente de Vertex AI no está configurado (HTTP 503)")
              raise HTTPException(status_code=503, detail={"response": "El cliente de Vertex AI no está configurado.", "log": "\n".join(log_entries)})
 
+        # AWAIT AQUÍ para la función principal
         response_text = await main_chatbot(req.query, log_entries)
         
         end_time = time.time()
@@ -838,6 +718,7 @@ async def chatbot_page(request: Request):
 
 @app.post("/api/predict")
 async def api_predict(req: PredictRequest):
+    # Nota: predict_stock_by_date es SÍNCRONA, pero FastAPI la maneja en un thread pool.
     target_date = req.date or datetime.now().strftime("%Y-%m-%d")
     
     pred = predict_stock_by_date(req.product_id, target_date)
@@ -1051,16 +932,3 @@ async def get_logs():
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al leer el archivo de logs: {e}")
-<<<<<<< HEAD
-
-
-# ====================================================================
-# FIN DEL ARCHIVO - Listo para uvicorn app:app --reload
-# ====================================================================
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
-=======
-    
->>>>>>> 5a9127d0611a6e36a5f13f930cdcbcd1a4632789
