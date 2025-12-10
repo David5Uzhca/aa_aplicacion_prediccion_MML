@@ -107,7 +107,7 @@ FEATURE_COLS = [
 
 MODEL_PATH = MODEL_DIR / "best_model.keras"
 SCALER_X_PATH = MODEL_DIR / "scaler_X.pkl"
-SCALER_Y_PATH = MODEL_DIR / "scaler_Y.pkl"
+SCALER_Y_PATH = MODEL_DIR / "scaler_y.pkl"
 DATASET_PKL = MODEL_DIR / "dataset_limpio_quantity_on_hand.csv"
 PRODUCTS_CSV = MODEL_DIR / "products.csv"
 
