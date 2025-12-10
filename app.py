@@ -186,7 +186,7 @@ def run_in_threadpool(func, *args, **kwargs):
     loop = get_event_loop()
     return loop.run_in_executor(None, partial(func, *args, **kwargs))
 
-LOCAL_API_BASE_URL = "http://localhost:8000"
+LOCAL_API_BASE_URL = "http://localhost:8000"    
 
 async def predecir_stock_producto(product_id: str, target_date: str) -> str:
     """Llama al endpoint /api/predict, genera la conclusión, y luego fuerza el reentrenamiento."""
@@ -225,16 +225,16 @@ async def predecir_stock_producto(product_id: str, target_date: str) -> str:
                 'quantity_on_hand': stock_predicho  # Usamos la predicción como el 'dato real'
             }]
             
-            # Ejecutar la función síncrona retrain_model en el threadpool
             retrain_result = await run_in_threadpool(retrain_model, pd.DataFrame(new_data_for_retrain))
             
             retrain_log = retrain_result.get('log', 'No se generó log.')
             
-            # 4. DEVOLVER LA CONCLUSIÓN Y EL LOG DE REENTRENAMIENTO
             if retrain_result.get('success'):
-                return f"{conclusion_text}\n\n[INFO DE RETRAIN] Modelo ajustado con éxito usando el dato predicho. {retrain_log}"
+                logger.info(f"    [REENTRENAMIENTO INFO] ID: {product_id}. Estado: Éxito. Log: {retrain_log.strip()}")
             else:
-                return f"{conclusion_text}\n\n[ERROR DE RETRAIN] Falló el ajuste del modelo: {retrain_log}"
+                logger.error(f"    [REENTRENAMIENTO ERROR] ID: {product_id}. Estado: Fallo. Detalle: {retrain_log.strip()}")
+            
+            return conclusion_text
         
         except httpx.HTTPStatusError as e:
             # ... (Manejo de errores HTTP) ...
