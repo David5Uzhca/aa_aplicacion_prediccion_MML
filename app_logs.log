@@ -2604,3 +2604,10 @@
 2025-12-10 10:46:55,070 - INFO - Columnas de features definidas: 13 columnas.
 2025-12-10 10:46:55,839 - INFO - Cliente de Vertex AI inicializado.
 2025-12-10 10:46:55,879 - INFO - Modelos LLM (Rag y Tools) de LangChain inicializados.
+2025-12-10 11:13:41,445 - INFO - Sistema de Logging Centralizado inicializado.
+2025-12-10 11:13:41,447 - INFO - Archivos estáticos montados en /static.
+2025-12-10 11:13:41,448 - INFO - Información de la empresa cargada.
+2025-12-10 11:13:41,449 - INFO - FAQs cargadas: 6 entradas.
+2025-12-10 11:13:41,449 - INFO - Columnas de features definidas: 13 columnas.
+2025-12-10 11:13:41,872 - INFO - Cliente de Vertex AI inicializado.
+2025-12-10 11:13:41,898 - INFO - Modelos LLM (Rag y Tools) de LangChain inicializados.

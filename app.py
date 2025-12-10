@@ -1,24 +1,25 @@
 # ====================================================================
-# app.py - SISTEMA COMPLETO CON LOGS EXHAUSTIVOS (PARTE 1/3)
+# 1. IMPORTACIONES
 # ====================================================================
-
-# --- 1. IMPORTACIONES ---
 import json
 import logging
 import os
 import re
 import sys
+import requests
+import json
 import time
 import numpy as np
 import pandas as pd
 import pickle
 import tensorflow as tf
+import httpx
+
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, List
 from io import StringIO
 from logging.handlers import RotatingFileHandler
-
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -45,6 +46,7 @@ LOG_FILE = BASE_DIR / "app_logs.log"
 
 logger = logging.getLogger('my_api_logger')
 logger.setLevel(logging.INFO)
+logger.propagate = False
 
 file_handler = RotatingFileHandler(
     LOG_FILE, maxBytes=1024*1024, backupCount=3, encoding='utf-8'
@@ -74,7 +76,7 @@ logger.info("Archivos estáticos montados en /static.")
 # --- AUTENTICACIÓN: CONFIANZA EN EL SERVICE ACCOUNT DE LA VM ---
 VERTEX_PROJECT_ID = "prediccion-478120"
 VERTEX_REGION = "us-central1"
-VERTEX_MODEL = "gemini-1.5-flash"
+VERTEX_MODEL = "gemini-2.5-flash"
 
 EMPRESA_INFO = {
     "nombre": "Supermercado El Despensa",
@@ -128,8 +130,6 @@ llm_tool = None
 # ====================================================================
 # 6. DEFINICIÓN DE ESQUEMAS PYDANTIC Y STUBS (CHATBOT TOOLS)
 # ====================================================================
-
-# --- Schemas Pydantic ---
 class PredictRequest(BaseModel):
     product_id: str
     date: Optional[str] = None
@@ -180,9 +180,43 @@ def nueva_funcion_2(departamento: str) -> str:
     """Función de ejemplo 2: Simula la consulta del inventario histórico de un departamento específico."""
     return f"Consultando el historial de inventario del departamento de '{departamento}'. Resumen: El historial muestra alta rotación en las últimas 4 semanas."
 
-def predecir_stock_producto(product_id: str, target_date: str) -> str:
-    """Llama al endpoint /api/predict para obtener la predicción de un producto específico."""
-    return f"Activando la predicción de stock para el producto {product_id} para la fecha {target_date}. Revisa la interfaz web para el resultado."
+LOCAL_API_BASE_URL = "http://localhost:8000" 
+async def predecir_stock_producto(product_id: str, target_date: str) -> str:
+    url = f"{LOCAL_API_BASE_URL}/api/predict"
+    payload = {
+        "product_id": product_id,
+        "date": target_date
+    }
+    
+    async with httpx.AsyncClient(timeout=10) as client:
+        try:
+            response = await client.post(url, json=payload)
+            response.raise_for_status()
+            
+            data = response.json()
+            
+            stock_predicho = data.get('quantity_on_hand', 0)
+            nombre_producto = data.get('product_name', product_id)
+            fecha_predicha = data.get('fecha_predicha', target_date)
+            
+            umbral = 20 # El umbral de reabastecimiento es 20 unidades
+            
+            if stock_predicho <= umbral:
+                conclusion = f"El producto {nombre_producto} ({product_id}) cuenta con un stock predicho de {stock_predicho:.2f} para la fecha {fecha_predicha}, por lo que REQUIERE REABASTECIMIENTO URGENTE."
+            else:
+                conclusion = f"El producto {nombre_producto} ({product_id}) cuenta con un stock predicho de {stock_predicho:.2f} para la fecha {fecha_predicha}, por lo que no requiere reabastecimiento en este momento."
+                
+            return conclusion
+        
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 404:
+                return f"Error: No se encontraron datos históricos o el producto {product_id} no existe. [Código 404]"
+            return f"Error HTTP al llamar al servicio de predicción: {e}"
+        
+        except httpx.RequestError as e:
+            return f"Error de conexión: Fallo de red interno al intentar conectar con el servicio: {e}."
+        except Exception as e:
+            return f"Error inesperado al procesar la predicción: {e}"
 
 def predecir_stock_general(target_date: str) -> str:
     """Llama al endpoint /api/restock para obtener la predicción de stock de todos los productos principales."""
@@ -277,8 +311,7 @@ def responder_faqs(query: str, log_entries: List[str]) -> str:
         return "Disculpe, ocurrió un error al consultar la base de conocimiento."
 
 # 7.3 Lógica de Function Calling
-def responder_tool_calling(query: str, log_entries: List[str]) -> str:
-    """Utiliza LangChain para decidir si la pregunta del usuario requiere una herramienta."""
+async def responder_tool_calling(query: str, log_entries: List[str]) -> str: 
     global llm_tool
     log_entries.append("  -> LÓGICA FUNCTION CALLING: Ejecutando modelo Gemini para detección de herramienta.")
     if llm_tool is None: return "Disculpe, el servicio de Function Calling no está disponible."
@@ -287,7 +320,7 @@ def responder_tool_calling(query: str, log_entries: List[str]) -> str:
         response = llm_tool.invoke([HumanMessage(content=query)])
     except Exception as e:
         log_entries.append(f"  -> ERROR TOOL CALLING: Fallo en la invocación de LangChain/Gemini. Detalle: {e}")
-        return "" # Para que pase al RAG
+        return "" 
 
     if response.tool_calls:
         tool_call = response.tool_calls[0]
@@ -301,7 +334,7 @@ def responder_tool_calling(query: str, log_entries: List[str]) -> str:
         for tool_function in TOOLS:
             if tool_function.__name__ == tool_name:
                 try:
-                    result = tool_function(**tool_args)
+                    result = await tool_function(**tool_args)
                     log_entries.append(f"  -> RESULTADO FUNCIÓN: Éxito. {result}")
                     return f"✅ FUNCIÓN LLAMADA: {tool_name}. Mensaje de éxito: {result}"
                 except Exception as e:
@@ -315,9 +348,7 @@ def responder_tool_calling(query: str, log_entries: List[str]) -> str:
     return ""
 
 # 7.4 Función Principal del Chatbot
-def main_chatbot(query: str, log_entries: List[str]) -> str:
-    """Función principal que dirige la consulta a la función de respuesta apropiada."""
-    
+async def main_chatbot(query: str, log_entries: List[str]) -> str:
     log_entries.append("-> PASO 1: Verificación de Respuestas Básicas.")
     respuesta_basica = responder_basico(query, log_entries)
     if respuesta_basica:
@@ -325,7 +356,7 @@ def main_chatbot(query: str, log_entries: List[str]) -> str:
         return respuesta_basica
 
     log_entries.append("-> PASO 2: Verificación de Function Calling.")
-    respuesta_tool = responder_tool_calling(query, log_entries)
+    respuesta_tool = await responder_tool_calling(query, log_entries)
     if respuesta_tool:
         log_entries.append("-> FLUJO FINAL: Retornando Resultado de Function Calling.")
         return respuesta_tool
@@ -612,10 +643,6 @@ except Exception as e:
 
 @app.post("/api/chatbot")
 async def api_chatbot(req: ChatQuery):
-    """
-    Endpoint principal para recibir consultas del chatbot.
-    Dirige la consulta a la lógica unificada y devuelve la respuesta junto con un log detallado.
-    """
     log_entries: List[str] = []
     
     try:
@@ -627,7 +654,7 @@ async def api_chatbot(req: ChatQuery):
              log_entries.append(f"-> ERROR: Cliente de Vertex AI no está configurado (HTTP 503)")
              raise HTTPException(status_code=503, detail={"response": "El cliente de Vertex AI no está configurado.", "log": "\n".join(log_entries)})
 
-        response_text = main_chatbot(req.query, log_entries)
+        response_text = await main_chatbot(req.query, log_entries)
         
         end_time = time.time()
         duration = end_time - start_time
