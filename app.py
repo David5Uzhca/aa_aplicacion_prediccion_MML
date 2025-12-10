@@ -19,7 +19,8 @@ from pathlib import Path
 from typing import Optional, List
 from io import StringIO
 from logging.handlers import RotatingFileHandler
-
+from asyncio import get_event_loop
+from functools import partial
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -181,10 +182,14 @@ def nueva_funcion_2(departamento: str) -> str:
     """Función de ejemplo 2: Simula la consulta del inventario histórico de un departamento específico."""
     return f"Consultando el historial de inventario del departamento de '{departamento}'. Resumen: El historial muestra alta rotación en las últimas 4 semanas."
 
-LOCAL_API_BASE_URL = "http://localhost:8000" # Usamos localhost para httpx
+def run_in_threadpool(func, *args, **kwargs):
+    loop = get_event_loop()
+    return loop.run_in_executor(None, partial(func, *args, **kwargs))
+
+LOCAL_API_BASE_URL = "http://localhost:8000"
 
 async def predecir_stock_producto(product_id: str, target_date: str) -> str:
-    """Llama al endpoint /api/predict (asíncrono) y devuelve el stock predicho."""
+    """Llama al endpoint /api/predict, genera la conclusión, y luego fuerza el reentrenamiento."""
     
     url = f"{LOCAL_API_BASE_URL}/api/predict"
     payload = {
@@ -192,11 +197,11 @@ async def predecir_stock_producto(product_id: str, target_date: str) -> str:
         "date": target_date
     }
     
+    # 1. REALIZAR PREDICCIÓN (Asíncrona)
     async with httpx.AsyncClient(timeout=10) as client:
         try:
             response = await client.post(url, json=payload)
             response.raise_for_status()
-            
             data = response.json()
             
             stock_predicho = data.get('quantity_on_hand', 0)
@@ -205,19 +210,39 @@ async def predecir_stock_producto(product_id: str, target_date: str) -> str:
             
             umbral = 20
             
+            # 2. CONFIGURAR LA CONCLUSIÓN
             if stock_predicho <= umbral:
-                conclusion = f"El producto {nombre_producto} ({product_id}) cuenta con un stock predicho de {stock_predicho:.2f} para la fecha {fecha_predicha}, por lo que REQUIERE REABASTECIMIENTO URGENTE."
+                conclusion_text = f"El producto {nombre_producto} ({product_id}) cuenta con un stock predicho de {stock_predicho:.2f} para la fecha {fecha_predicha}, por lo que REQUIERE REABASTECIMIENTO URGENTE."
             else:
-                conclusion = f"El producto {nombre_producto} ({product_id}) cuenta con un stock predicho de {stock_predicho:.2f} para la fecha {fecha_predicha}, por lo que no requiere reabastecimiento en este momento."
-                
-            return conclusion
+                conclusion_text = f"El producto {nombre_producto} ({product_id}) cuenta con un stock predicho de {stock_predicho:.2f} para la fecha {fecha_predicha}, por lo que no requiere reabastecimiento en este momento."
+            
+            # 3. EJECUTAR REENTRENAMIENTO (Síncrono en un Threadpool)
+            
+            # Simular que el valor predicho es ahora el valor real del inventario
+            new_data_for_retrain = [{
+                'product_id': product_id,
+                'created_at': fecha_predicha,
+                'quantity_on_hand': stock_predicho  # Usamos la predicción como el 'dato real'
+            }]
+            
+            # Ejecutar la función síncrona retrain_model en el threadpool
+            retrain_result = await run_in_threadpool(retrain_model, pd.DataFrame(new_data_for_retrain))
+            
+            retrain_log = retrain_result.get('log', 'No se generó log.')
+            
+            # 4. DEVOLVER LA CONCLUSIÓN Y EL LOG DE REENTRENAMIENTO
+            if retrain_result.get('success'):
+                return f"{conclusion_text}\n\n[INFO DE RETRAIN] Modelo ajustado con éxito usando el dato predicho. {retrain_log}"
+            else:
+                return f"{conclusion_text}\n\n[ERROR DE RETRAIN] Falló el ajuste del modelo: {retrain_log}"
         
         except httpx.HTTPStatusError as e:
+            # ... (Manejo de errores HTTP) ...
             if e.response.status_code == 404:
                 return f"Error: No se encontraron datos históricos o el producto {product_id} no existe. [Código 404]"
             return f"Error HTTP al llamar al servicio de predicción: {e}"
-        
         except httpx.RequestError as e:
+            # ... (Manejo de errores de conexión) ...
             return f"Error de conexión: Fallo de red interno al intentar conectar con el servicio: {e}."
         except Exception as e:
             return f"Error inesperado al procesar la predicción: {e}"
